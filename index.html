@@ -127,7 +127,7 @@ ul.rules li::before{content:"·";color:var(--acc);margin-right:6px;font-weight:7
     <div class="scard px"><div class="lab">BTCUSDT 永续 · 最新价</div><div class="val num"><span id="px-BTCUSDT">…</span><span class="delta" id="pxd-BTCUSDT"></span></div><div class="lab">较上次记账价 <span id="pxb-BTCUSDT" class="num">…</span></div></div>
     <div class="scard px"><div class="lab">TSLAUSDT 永续 · 最新价</div><div class="val num"><span id="px-TSLAUSDT">…</span><span class="delta" id="pxd-TSLAUSDT"></span></div><div class="lab">较上次记账价 <span id="pxb-TSLAUSDT" class="num">…</span></div></div>
     <div class="scard px"><div class="lab">SPCXUSDT 永续 · 最新价</div><div class="val num"><span id="px-SPCXUSDT">…</span><span class="delta" id="pxd-SPCXUSDT"></span></div><div class="lab">较上次记账价 <span id="pxb-SPCXUSDT" class="num">…</span></div></div>
-    <div class="scard"><div class="lab">组合盯市权益（<span id="stCnt">…</span> 策略合计）</div><div class="val num" id="stMtm">…</div><div class="lab">每策略 400 U 独立账本 · 基准 <span id="stBase">…</span></div></div>
+    <div class="scard"><div class="lab">组合盯市权益（<span id="stCnt">…</span> 策略合计）</div><div class="val num" id="stMtm">…</div><div class="lab">每策略 500 U 独立账本 · 基准 <span id="stBase">…</span></div></div>
     <div class="scard"><div class="lab">组合已实现权益</div><div class="val num" id="stReal">…</div><div class="lab">总浮盈 <span id="stUn" class="num">…</span></div></div>
     <div class="scard"><div class="lab">当前持仓</div><div class="val num" id="stPos">…</div><div class="lab" id="stPosNames">…</div></div>
     <div class="scard"><div class="lab">当前领先策略（盯市权益）</div><div class="val sm num" id="stLeader">…</div><div class="lab" id="stLeaderSub">…</div></div>
@@ -242,7 +242,7 @@ ul.rules li::before{content:"·";color:var(--acc);margin-right:6px;font-weight:7
 <!-- ================= 模拟盘 ================= -->
 <section class="page" id="p-paper">
   <div class="card">
-    <h3>策略总表 · <span id="pmCount">…</span> 个策略 × 400 U 独立复利账本 <span class="tag">盯市列每约 5 秒实时重算</span></h3>
+    <h3>策略总表 · <span id="pmCount">…</span> 个策略 × 500 U 独立复利账本 <span class="tag">盯市列每约 5 秒实时重算</span></h3>
     <div class="tw"><table class="tbl" id="pmTable"></table></div>
   </div>
   <div class="card mt6">
@@ -318,7 +318,7 @@ ul.rules li::before{content:"·";color:var(--acc);margin-right:6px;font-weight:7
     <div class="card">
       <h3>风控规则</h3>
       <ul class="rules">
-        <li>模拟盘：每策略 400 U 独立复利账本，单笔风险 0.5% 起，带硬止损</li>
+        <li>模拟盘：每策略 500 U 独立复利账本，单笔风险 2%，杠杆上限 20x，带硬止损</li>
         <li>真实账户剧本：BTC 杠杆 ≤10 倍、股票合约 ≤5 倍，单笔风险 ≤账户 10%</li>
         <li>FOMC 等重大事件当天及前后 24 小时：事件分归零，一律观望不进场</li>
         <li>股票合约只认日线收盘确认，并提示永续与现货基差、周末跳空风险</li>
@@ -741,13 +741,13 @@ function renderLvCards(){
 }
 function drawCharts(){
   const tot = S.livePts.map(p => p.tot), times = S.livePts.map(p => p.t);
-  drawLine($("lvChart"), tot, {color:"#35c4ff", fill:"rgba(53,196,255,.07)", base:names().length * 400, times});
-  drawLine($("ovLiveChart"), tot, {color:"#35c4ff", fill:"rgba(53,196,255,.07)", base:names().length * 400, times});
-  names().forEach(n => drawLine($("lc-cv-" + n), S.livePts.map(p => p.eq[n]), {color:"#f0b90b", base:400, mini:true}));
+  drawLine($("lvChart"), tot, {color:"#35c4ff", fill:"rgba(53,196,255,.07)", base:names().length * 500, times});
+  drawLine($("ovLiveChart"), tot, {color:"#35c4ff", fill:"rgba(53,196,255,.07)", base:names().length * 500, times});
+  names().forEach(n => drawLine($("lc-cv-" + n), S.livePts.map(p => p.eq[n]), {color:"#f0b90b", base:500, mini:true}));
   const real = S.hist.map(p => names().reduce((a,n) => a + ((p.strategies[n] || {}).equity || 0), 0));
   const rtimes = S.hist.map(p => parseTs(p.ts));
-  drawLine($("lvRealChart"), real, {color:"#16c784", step:true, base:names().length * 400, times:rtimes});
-  drawLine($("ovRealChart"), real, {color:"#16c784", step:true, base:names().length * 400, times:rtimes});
+  drawLine($("lvRealChart"), real, {color:"#16c784", step:true, base:names().length * 500, times:rtimes});
+  drawLine($("ovRealChart"), real, {color:"#16c784", step:true, base:names().length * 500, times:rtimes});
   $("lvPts").textContent = S.livePts.length + " 点";
 }
 function paintLive(first){
@@ -774,7 +774,7 @@ function paintLive(first){
   $("stReal").textContent = fN(real);
   const cnt = names().length;
   const eCnt = $("stCnt"); if (eCnt) eCnt.textContent = cnt;
-  const eBase = $("stBase"); if (eBase) eBase.textContent = fN(cnt * 400, 0);
+  const eBase = $("stBase"); if (eBase) eBase.textContent = fN(cnt * 500, 0);
   const eRos = $("lvRosterN"); if (eRos) eRos.textContent = cnt + " 个 · 均 BTC";
   const ePm = $("pmCount"); if (ePm) ePm.textContent = cnt;
   const unEl = $("stUn"); unEl.textContent = fS(un) + " U"; unEl.className = "num " + cls(un);
