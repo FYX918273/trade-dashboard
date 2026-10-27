@@ -3,55 +3,121 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>交易看板 · 策略模拟盘</title>
+<title>交易看板 · 策略模拟盘与盯盘</title>
 <style>
-  :root { --bg:#0d1117; --card:#161b22; --line:#2a313a; --txt:#e6edf3; --dim:#8b98a5;
-          --up:#3fb950; --dn:#f85149; --acc:#58a6ff; }
-  * { box-sizing:border-box; }
-  body { margin:0; background:var(--bg); color:var(--txt);
-         font-family:-apple-system,"PingFang SC","Microsoft YaHei",Segoe UI,sans-serif; }
-  header { padding:18px 16px 6px; max-width:1080px; margin:0 auto; }
-  h1 { font-size:21px; margin:0 0 4px; }
-  .sub { color:var(--dim); font-size:12.5px; }
-  nav { display:flex; gap:6px; flex-wrap:wrap; max-width:1080px; margin:10px auto 0; padding:0 16px; }
-  nav button { background:var(--card); color:var(--dim); border:1px solid var(--line);
-               padding:7px 14px; border-radius:999px; font-size:13.5px; cursor:pointer; }
-  nav button.on { color:#fff; border-color:var(--acc); background:#1c2a3f; }
-  main { max-width:1080px; margin:0 auto; padding:14px 16px 34px; }
-  section.page { display:none; } section.page.on { display:block; }
-  .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:10px; }
-  .card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:13px 14px; }
-  .card h3 { margin:0 0 8px; font-size:14px; }
-  .k { color:var(--dim); font-size:12px; }
-  .v { font-size:19px; font-weight:650; }
-  .row { display:flex; justify-content:space-between; gap:8px; padding:3px 0; font-size:13.5px; }
-  .up { color:var(--up); } .dn { color:var(--dn); }
-  table { width:100%; border-collapse:collapse; font-size:12.8px; }
-  th, td { padding:6px 7px; border-bottom:1px solid var(--line); text-align:right; white-space:nowrap; }
-  th { color:var(--dim); font-weight:500; } td:first-child, th:first-child { text-align:left; }
-  .wrap { overflow-x:auto; }
-  .bar { height:7px; background:#232a33; border-radius:99px; overflow:hidden; margin-top:4px; }
-  .bar > i { display:block; height:100%; background:var(--acc); }
-  .pill { display:inline-block; padding:1px 8px; border-radius:99px; font-size:11.5px; border:1px solid var(--line); color:var(--dim); }
-  .pill.ok { color:var(--up); border-color:var(--up); }
-  .live-dot { display:inline-block; width:8px; height:8px; border-radius:50%; background:var(--up);
-              margin-right:6px; animation:pl 1.6s infinite; }
-  @keyframes pl { 0%,100%{opacity:1} 50%{opacity:.25} }
-  .flash-up { transition:color .3s; color:var(--up) !important; }
-  .flash-dn { transition:color .3s; color:var(--dn) !important; }
-  canvas { width:100%; display:block; }
-  .feed div { padding:6px 0; border-bottom:1px solid var(--line); font-size:13px; }
-  .note { color:var(--dim); font-size:12.5px; line-height:1.7; }
-  .big { font-size:26px; font-weight:700; }
+:root{
+  --bg:#0b0e11; --panel:#12161d; --panel2:#171d27; --line:#1e2632; --line2:#262f3f;
+  --txt:#eaecef; --sub:#8a94a6; --dim:#5b6577;
+  --up:#16c784; --dn:#ea3943; --acc:#35c4ff; --warn:#f0b90b;
+  --upbg:rgba(22,199,132,.13); --dnbg:rgba(234,57,67,.13);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{font-size:13px}
+body{background:var(--bg);color:var(--txt);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",Roboto,Arial,sans-serif;padding:8px 10px 20px;overflow-x:hidden}
+a{color:var(--acc);text-decoration:none}
+.num{font-variant-numeric:tabular-nums;font-feature-settings:"tnum"}
+.up{color:var(--up)} .dn{color:var(--dn)} .sub{color:var(--sub)} .dim{color:var(--dim)} .warn{color:var(--warn)}
+/* ---------- header + strip ---------- */
+header.top{position:sticky;top:0;z-index:30;background:rgba(11,14,17,.96);padding:6px 0 8px;border-bottom:1px solid var(--line)}
+.hrow{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+h1{font-size:16px;font-weight:700;letter-spacing:.5px}
+.live-dot{width:8px;height:8px;border-radius:50%;background:var(--up);display:inline-block;margin-right:5px;animation:pulse 1.6s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(22,199,132,.5)}70%{box-shadow:0 0 0 7px rgba(22,199,132,0)}100%{box-shadow:0 0 0 0 rgba(22,199,132,0)}}
+.hmeta{margin-left:auto;color:var(--sub);font-size:11.5px;display:flex;gap:12px;flex-wrap:wrap}
+.strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));gap:6px;margin-top:8px}
+.scard{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:6px 9px;min-width:0}
+.scard .lab{color:var(--sub);font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.scard .val{font-size:16px;font-weight:700;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.scard .val.sm{font-size:13.5px}
+.scard .delta{font-size:11px;margin-left:6px;font-weight:600}
+.scard.px .val{font-size:17px}
+/* ---------- tabs ---------- */
+nav.tabs{display:flex;gap:2px;margin:10px 0 8px;border-bottom:1px solid var(--line);overflow-x:auto;scrollbar-width:none}
+nav.tabs::-webkit-scrollbar{display:none}
+nav.tabs button{background:none;border:none;color:var(--sub);font-size:13.5px;font-weight:600;padding:7px 13px;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;font-family:inherit}
+nav.tabs button:hover{color:var(--txt)}
+nav.tabs button.on{color:var(--txt);border-bottom-color:var(--acc)}
+section.page{display:none}
+section.page.on{display:block}
+/* ---------- cards / grids ---------- */
+.card{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:9px 11px;min-width:0}
+.card h3{font-size:13px;font-weight:700;margin-bottom:7px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.card h3 .tag{margin-left:auto}
+.grid{display:grid;gap:6px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(330px,1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}
+.g9{grid-template-columns:repeat(auto-fit,minmax(225px,1fr))}
+.mt6{margin-top:6px}
+/* ---------- tables ---------- */
+.tw{overflow-x:auto;max-width:100%}
+table.tbl{width:100%;border-collapse:collapse;font-size:12px;white-space:nowrap}
+table.tbl th{color:var(--sub);font-weight:600;text-align:right;padding:4px 6px;border-bottom:1px solid var(--line2);font-size:11.5px}
+table.tbl th:first-child,table.tbl td:first-child{text-align:left}
+table.tbl td{padding:4px 6px;border-bottom:1px solid var(--line);text-align:right}
+table.tbl tr:hover td{background:rgba(255,255,255,.02)}
+table.tbl td.l,table.tbl th.l{text-align:left}
+.tag{display:inline-block;font-size:10.5px;padding:1px 6px;border-radius:3px;background:var(--panel2);border:1px solid var(--line2);color:var(--sub);font-weight:600}
+.tag.up{color:var(--up);border-color:rgba(22,199,132,.4);background:var(--upbg)}
+.tag.dn{color:var(--dn);border-color:rgba(234,57,67,.4);background:var(--dnbg)}
+.tag.acc{color:var(--acc);border-color:rgba(53,196,255,.4);background:rgba(53,196,255,.1)}
+.tag.warn{color:var(--warn);border-color:rgba(240,185,11,.4);background:rgba(240,185,11,.1)}
+/* ---------- bars / feed / misc ---------- */
+.bar{height:6px;background:var(--panel2);border-radius:3px;overflow:hidden;min-width:70px}
+.bar i{display:block;height:100%;background:var(--acc);border-radius:3px}
+.bar i.up{background:var(--up)} .bar i.dn{background:var(--dn)} .bar i.warn{background:var(--warn)}
+.feed{list-style:none;font-size:12px}
+.feed li{display:flex;gap:8px;padding:4px 2px;border-bottom:1px solid var(--line);align-items:baseline}
+.feed li:last-child{border-bottom:none}
+.feed .ft{color:var(--dim);font-variant-numeric:tabular-nums;white-space:nowrap}
+.feed .fx{flex:1;min-width:0}
+canvas.chart{width:100%;display:block}
+.flash-up{animation:fup .8s} .flash-dn{animation:fdn .8s}
+@keyframes fup{0%{background:var(--upbg)}100%{background:transparent}}
+@keyframes fdn{0%{background:var(--dnbg)}100%{background:transparent}}
+.kv{display:flex;justify-content:space-between;gap:8px;padding:3px 0;border-bottom:1px dashed var(--line);font-size:12px}
+.kv:last-child{border-bottom:none}
+.kv .k{color:var(--sub)}
+.posbar{position:relative;height:8px;background:var(--panel2);border-radius:4px;margin:6px 0 2px}
+.posbar .mk{position:absolute;top:-3px;width:2px;height:14px;background:var(--acc);border-radius:1px}
+.note{font-size:11.5px;color:var(--sub);line-height:1.65}
+ul.rules{list-style:none;font-size:12px;line-height:1.9}
+ul.rules li::before{content:"·";color:var(--acc);margin-right:6px;font-weight:700}
+.err{background:var(--dnbg);border:1px solid rgba(234,57,67,.4);color:#ffb3b8;border-radius:6px;padding:8px 11px;font-size:12px;margin-bottom:6px;display:none}
+@media (max-width:720px){
+  html{font-size:12.5px}
+  body{padding:6px 6px 16px}
+  .strip{grid-template-columns:repeat(auto-fit,minmax(106px,1fr))}
+  .scard .val{font-size:14px}.scard.px .val{font-size:15px}
+  .g2,.g3,.g9{grid-template-columns:1fr}
+  h1{font-size:15px}
+}
 </style>
 </head>
 <body>
-<header>
-  <h1>交易看板</h1>
-  <div class="sub">策略自研模拟盘 · 真实行情 / 模拟成交 · 不构成投资建议<br>
-  数据更新于 <span id="genAt">…</span>（记账每 15 分钟一轮） · <span id="liveClock"></span></div>
+<header class="top">
+  <div class="hrow">
+    <h1><span class="live-dot"></span>交易看板</h1>
+    <span class="tag acc">策略自研 · 模拟盘</span>
+    <span class="sub" style="font-size:11.5px">真实行情 / 模拟成交 · 只监控不下单 · 不构成投资建议</span>
+    <div class="hmeta num">
+      <span>记账数据 <span id="genAt">…</span></span>
+      <span>盯市 <span id="tickAt">…</span>（<span id="tickAge">-</span>）</span>
+      <span id="clock"></span>
+    </div>
+  </div>
+  <div class="strip" id="strip">
+    <div class="scard px"><div class="lab">BTCUSDT 永续 · 最新价</div><div class="val num"><span id="px-BTCUSDT">…</span><span class="delta" id="pxd-BTCUSDT"></span></div><div class="lab">较上次记账价 <span id="pxb-BTCUSDT" class="num">…</span></div></div>
+    <div class="scard px"><div class="lab">TSLAUSDT 永续 · 最新价</div><div class="val num"><span id="px-TSLAUSDT">…</span><span class="delta" id="pxd-TSLAUSDT"></span></div><div class="lab">较上次记账价 <span id="pxb-TSLAUSDT" class="num">…</span></div></div>
+    <div class="scard px"><div class="lab">SPCXUSDT 永续 · 最新价</div><div class="val num"><span id="px-SPCXUSDT">…</span><span class="delta" id="pxd-SPCXUSDT"></span></div><div class="lab">较上次记账价 <span id="pxb-SPCXUSDT" class="num">…</span></div></div>
+    <div class="scard"><div class="lab">组合盯市权益（9 策略合计）</div><div class="val num" id="stMtm">…</div><div class="lab">每策略 400 U 独立账本 · 基准 3,600</div></div>
+    <div class="scard"><div class="lab">组合已实现权益</div><div class="val num" id="stReal">…</div><div class="lab">总浮盈 <span id="stUn" class="num">…</span></div></div>
+    <div class="scard"><div class="lab">当前持仓</div><div class="val num" id="stPos">…</div><div class="lab" id="stPosNames">…</div></div>
+    <div class="scard"><div class="lab">当前领先策略（盯市权益）</div><div class="val sm num" id="stLeader">…</div><div class="lab" id="stLeaderSub">…</div></div>
+    <div class="scard"><div class="lab">模拟盘运行</div><div class="val sm num" id="stDays">…</div><div class="lab">自 2026-10-26 起 · 前向记账</div></div>
+  </div>
 </header>
-<nav id="tabs">
+
+<nav class="tabs" id="tabs">
   <button data-p="overview" class="on">总览</button>
   <button data-p="live">实时</button>
   <button data-p="paper">模拟盘</button>
@@ -59,280 +125,738 @@
   <button data-p="backtest">回测</button>
   <button data-p="system">系统</button>
 </nav>
-<main>
-  <!-- 总览 -->
-  <section class="page on" id="p-overview">
-    <div class="grid">
-      <div class="card"><div class="k">真实账户（Bitget）</div>
-        <div class="v">约 400.68 USDT</div>
-        <div class="row"><span class="k">当前持仓</span><span>空仓</span></div>
-        <div class="row"><span class="k">老多单</span><span>已于 10/25 在 80,000 止损离场</span></div></div>
-      <div class="card"><div class="k">模拟盘组合（9 个策略盯市合计）</div>
-        <div class="v" id="ovMtm">…</div>
-        <div class="row"><span class="k">持仓中的策略</span><span id="ovOpen">…</span></div>
-        <div class="row"><span class="k">领跑策略</span><span id="ovLead">…</span></div></div>
-      <div class="card"><div class="k">下一轮记账倒计时</div>
-        <div class="v" id="ovCount">…</div>
-        <div class="k">每 15 分钟重放全部策略并记账一次</div></div>
-    </div>
-    <div class="grid" style="margin-top:10px">
-      <div class="card"><h3>BTCUSDT 永续 · 关键位剧本</h3>
-        <div class="row"><span class="k">做多触发（1H 收线）</span><span class="up">&gt; 83,700</span></div>
-        <div class="row"><span class="k">做空触发（1H 收线）</span><span class="dn">&lt; 80,000</span></div>
-        <div class="row"><span class="k">区间内</span><span>80,000 – 83,700 不喊单</span></div>
-        <div class="row"><span class="k">最近记账价</span><span id="ovBtc">…</span></div></div>
-      <div class="card"><h3>TSLAUSDT 永续 · 股票合约</h3>
-        <div class="row"><span class="k">做多触发（美股日线收盘）</span><span class="up">&gt; 389</span></div>
-        <div class="row"><span class="k">做空触发（美股日线收盘）</span><span class="dn">&lt; 349</span></div>
-        <div class="row"><span class="k">确认方式</span><span>日线收盘，不用盘中刺破</span></div>
-        <div class="row"><span class="k">最近记账价</span><span id="ovTsla">…</span></div></div>
-      <div class="card"><h3>SPCXUSDT 永续 · 股票合约</h3>
-        <div class="row"><span class="k">做多触发（美股日线收盘）</span><span class="up">&gt; 166</span></div>
-        <div class="row"><span class="k">做空触发（美股日线收盘）</span><span class="dn">&lt; 140</span></div>
-        <div class="row"><span class="k">确认方式</span><span>日线收盘，不用盘中刺破</span></div>
-        <div class="row"><span class="k">最近记账价</span><span id="ovSpcx">…</span></div></div>
-    </div>
-    <div class="card" style="margin-top:10px"><h3>仓位纪律</h3>
-      <div class="note">BTC 杠杆 ≤ 10 倍、股票合约 ≤ 5 倍；单笔风险 ≤ 账户 10%。FOMC 等重大事件当天及前后 24 小时不喊单。
-      模拟盘毕业前不建议任何实盘：前向 ≥ 30 笔或 ≥ 8 周、每笔期望 &gt; 0、最大回撤 ≤ 15%。</div></div>
-  </section>
+<div class="err" id="loadErr"></div>
 
-  <!-- 实时 -->
-  <section class="page" id="p-live">
+<!-- ================= 总览 ================= -->
+<section class="page on" id="p-overview">
+  <div class="grid g2">
     <div class="card">
-      <div><span class="live-dot"></span><b>实时盯市</b>
-        <span class="k"> · 策略浮动盈亏每约 5 秒按最新价重算（只盯市，不产生新开平仓）</span></div>
-      <div class="row" style="margin-top:6px"><span class="k">组合盯市权益（秒级）</span><span class="big" id="lvMtm">…</span></div>
-      <div class="row"><span class="k">下一轮记账</span><span id="lvCount">…</span></div>
-      <canvas id="pfChart" height="150"></canvas>
-      <div class="k">组合权益曲线（每轮记账一个点，随数据文件更新）</div>
+      <h3>盯盘剧本 · 触发位 <span class="tag">真实账户约 400.68 U · 当前空仓</span></h3>
+      <div class="tw"><table class="tbl">
+        <tr><th class="l">标的</th><th class="l">方向</th><th class="l">触发（确认）</th><th>开仓</th><th>止损</th><th>止盈 1 / 2</th></tr>
+        <tr><td class="l"><b>BTC</b></td><td class="l"><span class="tag up">做多</span></td><td class="l">1H 收线 &gt; 83,700</td><td>83,700–84,200</td><td>82,800</td><td>85,500 / 87,500</td></tr>
+        <tr><td class="l"><b>BTC</b></td><td class="l"><span class="tag dn">做空</span></td><td class="l">1H 收线 &lt; 80,000</td><td>79,500–80,000</td><td>80,600</td><td>79,000 / 78,000</td></tr>
+        <tr><td class="l"><b>TSLA</b></td><td class="l"><span class="tag up">做多</span></td><td class="l">日线收盘 &gt; 389</td><td>389–395</td><td>375</td><td>420 / 450</td></tr>
+        <tr><td class="l"><b>TSLA</b></td><td class="l"><span class="tag dn">做空</span></td><td class="l">日线收盘 &lt; 349</td><td>342–349</td><td>362</td><td>325 / 300</td></tr>
+        <tr><td class="l"><b>SPCX</b></td><td class="l"><span class="tag up">做多</span></td><td class="l">日线收盘 &gt; 166</td><td>166–172</td><td>155</td><td>190 / 211</td></tr>
+        <tr><td class="l"><b>SPCX</b></td><td class="l"><span class="tag dn">做空</span></td><td class="l">日线收盘 &lt; 140</td><td>133–140</td><td>150</td><td>120 / 108</td></tr>
+      </table></div>
+      <p class="note" style="margin-top:6px">BTC 以 1 小时收线确认触发，盘中刺破不算；股票合约以美股日线收盘确认（夜间/周末永续流动性薄、防假突破与周一跳空）。BTC 杠杆 ≤10 倍、股票 ≤5 倍，单笔风险 ≤账户 10%；SPCX 波动远大于 TSLA，同等风险下仓位更小。FOMC 等重大事件当天及前后 24 小时不进场。原 BTC 多单已于 2026-10-25 在 80,000 止损离场，现为空仓观望。</p>
     </div>
-    <div class="grid" id="lvCards" style="margin-top:10px"></div>
-    <div class="card" style="margin-top:10px"><h3>动态流水（按记账轮次对比生成）</h3>
-      <div class="feed" id="lvFeed"></div></div>
-  </section>
+    <div style="display:flex;flex-direction:column;gap:6px;min-width:0">
+      <div class="card">
+        <h3>模拟盘排行 <span class="tag acc">按盯市权益</span></h3>
+        <div class="tw"><table class="tbl" id="ovRank"></table></div>
+      </div>
+      <div class="card">
+        <h3>当前持仓</h3>
+        <div id="ovPos"><span class="sub">加载中…</span></div>
+      </div>
+      <div class="card">
+        <h3>毕业标准 <span class="tag warn">达标前不建议实盘</span></h3>
+        <ul class="rules">
+          <li>前向模拟 ≥30 笔 <b>或</b> 运行 ≥8 周（自 2026-10-26 起算）</li>
+          <li>每笔期望为正、最大回撤 ≤15%，且有回测参数高原支撑</li>
+          <li>系统只做监控与模拟，永不自动下单；实盘由人工决定</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="grid g2 mt6">
+    <div class="card">
+      <h3>组合盯市权益 · 秒级曲线 <span class="tag up">LIVE</span></h3>
+      <canvas class="chart" id="ovLiveChart" height="120"></canvas>
+      <p class="note">页面打开期间每约 5 秒按实时价重算并续点；历史段为盯市程序每约 9 秒落盘的记录。</p>
+    </div>
+    <div class="card">
+      <h3>组合已实现权益 · 每 15 分钟记账</h3>
+      <canvas class="chart" id="ovRealChart" height="120"></canvas>
+      <p class="note">阶梯线只在每轮记账落地时前进，对应各策略已平仓落袋的权益合计。</p>
+    </div>
+  </div>
+  <div class="card mt6">
+    <h3>最新动态</h3>
+    <ul class="feed" id="ovFeed"></ul>
+  </div>
+</section>
 
-  <!-- 模拟盘 -->
-  <section class="page" id="p-paper">
-    <div class="k" style="margin-bottom:8px">按盯市权益排名 · 浮动盈亏为秒级盯市值，权益/胜率/期望为每 15 分钟记账值</div>
-    <div id="ppCards"></div>
-  </section>
+<!-- ================= 实时 ================= -->
+<section class="page" id="p-live">
+  <div style="display:grid;grid-template-columns:minmax(0,1fr) 240px;gap:6px" id="lvMain">
+    <div class="card">
+      <h3>组合盯市权益 · 秒级 <span class="tag up">LIVE</span> <span class="tag" id="lvPts">… 点</span></h3>
+      <canvas class="chart" id="lvChart" height="230"></canvas>
+      <div class="kv"><span class="k">组合盯市权益</span><b class="num" id="lvMtm">…</b></div>
+      <div class="kv"><span class="k">页面打开以来变化</span><b class="num" id="lvChg">…</b></div>
+      <div class="kv"><span class="k">持仓浮盈合计</span><b class="num" id="lvUn">…</b></div>
+      <div class="kv"><span class="k">已实现权益（记账）</span><b class="num" id="lvReal">…</b></div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:6px;min-width:0">
+      <div class="card" style="text-align:center">
+        <div class="sub" style="font-size:11px">下一轮记账判定（开平仓按收盘 K 线）</div>
+        <div class="num" id="cdNext" style="font-size:30px;font-weight:700;margin:4px 0">--:--</div>
+        <div class="note">记账每 15 分钟一轮 · 锚点约 :05 / :20 / :35 / :50</div>
+      </div>
+      <div class="card">
+        <h3>本轮口径</h3>
+        <div class="kv"><span class="k">记账数据</span><span class="num" id="lvGenAt">…</span></div>
+        <div class="kv"><span class="k">最新已收盘 K 线</span><span class="num" id="lvBar">…</span></div>
+        <div class="kv"><span class="k">模拟盘起始</span><span class="num">2026-10-26</span></div>
+        <div class="kv"><span class="k">运行策略</span><span class="num">9 个 · 均 BTC</span></div>
+        <p class="note" style="margin-top:5px">秒级跳动的只有盯市数字（现价、浮盈、盯市权益）；开仓/平仓由策略按 1H / 4H 收盘 K 线判定，不会因盘中价格跳动多做一笔交易。</p>
+      </div>
+    </div>
+  </div>
+  <div class="grid g9 mt6" id="lvCards"></div>
+  <div class="grid g2 mt6">
+    <div class="card">
+      <h3>动态流水 <span class="tag acc">记账</span><span class="tag up">实时盯市</span></h3>
+      <ul class="feed" id="lvFeed"></ul>
+    </div>
+    <div class="card">
+      <h3>已实现权益（每 15 分钟记账）· 阶梯图</h3>
+      <canvas class="chart" id="lvRealChart" height="150"></canvas>
+      <p class="note">与秒级盯市曲线分开：这条只统计已平仓落袋的权益，开平仓事件见左侧流水中标「记账」的条目。</p>
+    </div>
+  </div>
+</section>
 
-  <!-- 毕业进度 -->
-  <section class="page" id="p-grad">
-    <div class="card"><h3>毕业标准</h3>
-      <div class="note">前向模拟 ≥ 30 笔 <b>或</b> ≥ 8 周 · 每笔期望 &gt; 0 · 最大回撤 ≤ 15%（且有回测高原支持）。
-      达标才建议实盘；未达标一律继续模拟。</div></div>
-    <div id="grCards" style="margin-top:10px"></div>
-  </section>
+<!-- ================= 模拟盘 ================= -->
+<section class="page" id="p-paper">
+  <div class="card">
+    <h3>策略总表 · 9 个策略 × 400 U 独立复利账本 <span class="tag">盯市列每约 5 秒实时重算</span></h3>
+    <div class="tw"><table class="tbl" id="pmTable"></table></div>
+  </div>
+  <div class="card mt6">
+    <h3>持仓明细</h3>
+    <div id="pmPos"><span class="sub">加载中…</span></div>
+  </div>
+  <div class="card mt6">
+    <h3>近 24 小时平仓</h3>
+    <div class="tw"><table class="tbl" id="pmClosed"></table></div>
+  </div>
+</section>
 
-  <!-- 回测 -->
-  <section class="page" id="p-backtest">
-    <div class="card"><h3>回测结论要点</h3><div class="note">
-      · 唐奇安突破在 BTC 上是唯一期望为正的「高原」（通道 40–80 样本内外皆正），但胜率仅 20–31%，靠少数大趋势赚钱，是薄 edge。<br>
-      · RSI(2) 与布林+RSI 在 BTC/TSLA 上期望基本为负：高胜率不等于赚钱，已淘汰为实盘候选（仍在模拟盘前向观察）。<br>
-      · 唐奇安用在 TSLA 上惨败（利润因子 0.26–0.37），策略和标的必须搭配看。<br>
-      · SPCX 永续历史只有约 4.5 个月，样本太小，下表数字不作结论依据。<br>
-      · 口径：Bitget 真实 K 线，扣手续费 0.06%/边 + 滑点 0.03%/边 + 资金费，时间顺序 70% 样本内 / 30% 样本外。</div></div>
-    <div class="card wrap" style="margin-top:10px"><h3>回测矩阵（18 格）</h3><div id="btTable"></div></div>
-    <div class="card wrap" style="margin-top:10px"><h3>唐奇安通道扫描（BTC，0.5% 风险档另有 1%/2% 档未列）</h3><div id="scanTable"></div></div>
-  </section>
+<!-- ================= 毕业进度 ================= -->
+<section class="page" id="p-grad">
+  <div class="card">
+    <h3>毕业标准 · 四项口径</h3>
+    <ul class="rules">
+      <li><b>样本量</b>：前向交易 ≥30 笔 <b>或</b> 运行 ≥8 周（2026-10-26 起算）——两条路走通其一即可</li>
+      <li><b>期望</b>：每笔期望（胜率×平均盈利 − 败率×平均亏损）必须为正，只看胜率会被「小止盈+大止损」骗过</li>
+      <li><b>回撤</b>：最大回撤 ≤15%，深回撤直接淘汰；马丁 / 无止损网格类「假复利」不纳入</li>
+      <li>全部达标才建议人工实盘；模拟盘成绩再好也不自动升级</li>
+    </ul>
+  </div>
+  <div class="grid g3 mt6" id="grCards"></div>
+</section>
 
-  <!-- 系统 -->
-  <section class="page" id="p-system">
-    <div class="card"><h3>自动运行的任务</h3>
-      <div class="row"><span>BTC 开仓评分</span><span class="k">每小时一轮，每轮都报分</span></div>
-      <div class="row"><span>TSLA / SPCX 评分</span><span class="k">每 4 小时一轮，以美股日线收盘确认</span></div>
-      <div class="row"><span>实时触发警报</span><span class="k">每 60 秒扫现价，进触发区即评估</span></div>
-      <div class="row"><span>模拟盘记账</span><span class="k">每 15 分钟一轮，9 个策略同台前向运行</span></div>
-      <div class="row"><span>秒级盯市</span><span class="k">常驻程序，每约 3 秒重算浮动盈亏</span></div>
-      <div class="row"><span>策略迭代</span><span class="k">每周一：新变体走 walk-forward 验证，优胜劣汰</span></div></div>
-    <div class="card" style="margin-top:10px"><h3>研究纪律</h3><div class="note">
-      每轮新变体 ≤ 6 个；最新一段数据只当考卷、永不用于调参；参数要在高原上成立（邻近参数都为正），尖峰淘汰；
-      挑战者必须在验证期望和回撤两项同时胜过现任才替换；马丁、无止损网格等「假复利」直接排除；
-      模拟盘未毕业前，绝不建议实盘下单。</div></div>
-    <div class="card" style="margin-top:10px"><h3>模拟口径</h3><div class="note">
-      每个策略独立 400 USDT 复利账本，2026-10-26 起前向记账；成交价按收盘 K 线重放，成本：手续费 0.06%/边、滑点 0.03%/边、资金费 0.01%/8 小时。本页面为公开快照，数据文件每 15 分钟更新一次。</div></div>
-  </section>
-</main>
+<!-- ================= 回测 ================= -->
+<section class="page" id="p-backtest">
+  <div class="card">
+    <h3>回测矩阵 · 3 标的 × 3 策略 × 样本内/外 <span class="tag">成本：手续费 0.06%/边 + 滑点 0.03%/边 + 资金费</span></h3>
+    <div class="tw"><table class="tbl" id="btTable"></table></div>
+    <p class="note" style="margin-top:6px">样本内/外按时间 70/30 切分，样本外只做考试、不参与调参。SPCX 永续历史仅约 4.5 个月、样本过少，其各行结论不成立，仅作记录。</p>
+  </div>
+  <div class="card mt6">
+    <h3>唐奇安通道扫描 · BTC（寻找参数高原，不是最高点）</h3>
+    <div class="tw"><table class="tbl" id="scTable"></table></div>
+    <p class="note" style="margin-top:6px">标「高原」的参数组合在样本内与样本外期望皆正且相邻参数不塌陷；模拟盘采用的通道 40 / 80 位于高原区。通道 120 的样本外期望虽高，但样本内单薄、笔数少，不作为依据。</p>
+  </div>
+  <div class="card mt6">
+    <h3>回测结论</h3>
+    <ul class="rules">
+      <li><b>唐奇安突破 —— 唯一存活（仅 BTC）</b>：通道 40–80 高原在 0.5% 风险口径下样本内外期望皆正；但胜率仅约 20–31%，约 2.7 年回测收益约 +9%、最大回撤约 −11%——是薄优势，不是印钞机；在 TSLA 上惨败（PF 0.26–0.37），已弃用</li>
+      <li><b>RSI(2) 改良版 —— 淘汰</b>：BTC 胜率 54–60% 看似漂亮，期望仍为负（样本内 −24.7% / 样本外 −16.5%），是典型的高胜率陷阱</li>
+      <li><b>布林带 + RSI —— 淘汰</b>：BTC / TSLA 期望基本为负</li>
+      <li><b>现成开源策略 —— 无一直接可用</b>：抽查的高胜率示例实测多为期望为负或靠不平仓刷胜率</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ================= 系统 ================= -->
+<section class="page" id="p-system">
+  <div class="grid g2">
+    <div class="card">
+      <h3>监控节奏</h3>
+      <ul class="rules">
+        <li><b>行情盯市</b>：盯市程序每约 3 秒抓取一次最新价，重算各策略浮动盈亏与盯市权益；本页打开时每约 5 秒直连行情源同步</li>
+        <li><b>模拟盘记账</b>：每 15 分钟一轮，按已收盘 K 线重放全部策略并落盘（开仓/平仓只认收盘价）</li>
+        <li><b>盯盘评分</b>：BTC 每小时一轮（日线/4H 定方向 + 1H 收线触发）；TSLA / SPCX 每 4 小时一轮，以美股日线收盘确认；每轮都打分、都留档</li>
+        <li><b>实时触发</b>：价格进入触发区时即时唤醒评估，不等整点</li>
+        <li><b>策略迭代</b>：每周一轮，每轮新变体 ≤6 个，walk-forward 验证，只有参数高原才算数，优胜劣汰、名额滚动</li>
+        <li><b>本页数据</b>：随每轮记账同步更新；行情与浮盈在页面打开期间为实时直连</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>数据来源</h3>
+      <ul class="rules">
+        <li>行情：Bitget 公开行情接口（USDT 永续 K 线与最新价），无需账户凭据</li>
+        <li>标的：BTCUSDT、TSLAUSDT、SPCXUSDT 永续合约</li>
+        <li>回测：Bitget 历史 K 线（BTC 约 2.7 年），成本模型 = 手续费 0.06%/边 + 滑点 0.03%/边 + 资金费 0.01%/8h</li>
+        <li>模拟成交：按收盘 K 线重放，止损/止盈按盘中高低点判定，与回测同一口径</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>风控规则</h3>
+      <ul class="rules">
+        <li>模拟盘：每策略 400 U 独立复利账本，单笔风险 0.5% 起，带硬止损</li>
+        <li>真实账户剧本：BTC 杠杆 ≤10 倍、股票合约 ≤5 倍，单笔风险 ≤账户 10%</li>
+        <li>FOMC 等重大事件当天及前后 24 小时：事件分归零，一律观望不进场</li>
+        <li>股票合约只认日线收盘确认，并提示永续与现货基差、周末跳空风险</li>
+        <li>毕业前不建议实盘：前向 ≥30 笔或 ≥8 周、期望为正、回撤 ≤15%</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>纪律</h3>
+      <ul class="rules">
+        <li>系统只做监控、评分与模拟记账，永不自动下单</li>
+        <li>每个策略的成绩以期望与回撤为准，不以单日盈亏论英雄</li>
+        <li>触发不等于进场：评分 ≥7 分才给出可执行开仓计划，低分照常报告并明确不建议进场</li>
+        <li>本页为公开版：只展示方法、节奏与成绩，不含任何账户凭据</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
 <script>
-const NAMES = {
-  donchian40_btc:"唐奇安 40 · BTC 4H", donchian80_btc:"唐奇安 80 · BTC 4H",
-  donchian40_longonly_btc:"唐奇安 40 只做多 · BTC 4H", donchian20_btc:"唐奇安 20 · BTC 4H",
-  keylevel_btc_1h:"关键位剧本 · BTC 1H", keylevel_gate_btc_1h:"关键位加门 · BTC 1H",
-  ema_cross_1h_btc:"EMA 交叉 · BTC 1H", rsi2_1h_btc:"RSI(2) 回归 · BTC 1H",
-  bb_meanrev_1h_btc:"布林回归 · BTC 1H" };
-const $ = s => document.querySelector(s);
-const fmt = (x, d=2) => x == null ? "—" : Number(x).toFixed(d);
-const sgn = x => x == null ? "" : (x > 0 ? "up" : x < 0 ? "dn" : "");
-const sT = ts => new Date(ts).toLocaleString("zh-CN", { timeZone:"Asia/Shanghai", hour12:false });
-let S = null, H = [], livePx = {}, lastLive = {};
-
-document.querySelectorAll("#tabs button").forEach(b => b.onclick = () => {
-  document.querySelectorAll("#tabs button").forEach(x => x.classList.toggle("on", x === b));
-  document.querySelectorAll("section.page").forEach(x => x.classList.toggle("on", x.id === "p-" + b.dataset.p));
-  drawAll();
-});
-
-function drawLine(cv, series, color) {
-  const ctx = cv.getContext("2d"), W = cv.clientWidth, Hh = cv.height;
-  if (cv.width !== W * 2) { cv.width = W * 2; cv.height = Hh * 2; }
-  ctx.scale(1, 1); ctx.clearRect(0, 0, cv.width, cv.height);
-  if (series.length < 2) { ctx.fillStyle = "#8b98a5"; ctx.font = "22px sans-serif";
-    ctx.fillText("数据积累中（每 15 分钟一个点）", 12, 40); return; }
-  const lo = Math.min(...series), hi = Math.max(...series), pad = (hi - lo || 1) * 0.15;
-  const X = i => 8 + i * (cv.width - 16) / (series.length - 1);
-  const Y = v => cv.height - 14 - (v - lo + pad) / (hi - lo + 2 * pad) * (cv.height - 28);
-  ctx.beginPath(); series.forEach((v, i) => i ? ctx.lineTo(X(i), Y(v)) : ctx.moveTo(X(i), Y(v)));
-  ctx.strokeStyle = color || "#58a6ff"; ctx.lineWidth = 2.5; ctx.stroke();
-  ctx.fillStyle = "#8b98a5"; ctx.font = "20px sans-serif";
-  ctx.fillText(fmt(hi), 8, 22); ctx.fillText(fmt(lo), 8, cv.height - 18);
+"use strict";
+/* ================= 常量与工具 ================= */
+const SYMS = ["BTCUSDT","TSLAUSDT","SPCXUSDT"];
+const START = new Date("2026-10-26T00:00:00Z");
+const NAME = {
+  donchian20_btc:"唐奇安 20", donchian40_btc:"唐奇安 40", donchian80_btc:"唐奇安 80",
+  donchian40_longonly_btc:"唐奇安 40 · 只做多", keylevel_btc_1h:"关键位剧本",
+  keylevel_gate_btc_1h:"关键位 · 突破门", ema_cross_1h_btc:"EMA 交叉",
+  rsi2_1h_btc:"RSI(2) 反转", bb_meanrev_1h_btc:"布林带回归"
+};
+const SUB = {
+  donchian20_btc:"通道突破 · 4H · 通道 20", donchian40_btc:"通道突破 · 4H · 通道 40",
+  donchian80_btc:"通道突破 · 4H · 通道 80", donchian40_longonly_btc:"通道突破 · 4H · 通道 40 · 只做多",
+  keylevel_btc_1h:"关键位 · 1H 收线确认", keylevel_gate_btc_1h:"关键位 + 新鲜突破门 · 1H",
+  ema_cross_1h_btc:"EMA12/26 + 200 均线过滤 · 1H", rsi2_1h_btc:"RSI(2) 极值反转 · 1H",
+  bb_meanrev_1h_btc:"布林带 + RSI 均值回归 · 1H"
+};
+const BTNAME = {donchian:"唐奇安突破", rsi2:"RSI(2) 改良", bb_rsi:"布林带 + RSI"};
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const isN = v => v === null || v === undefined || Number.isNaN(v);
+function fN(v, d=2){ return isN(v) ? "—" : Number(v).toLocaleString("en-US",{minimumFractionDigits:d, maximumFractionDigits:d}); }
+function fS(v, d=2){ return isN(v) ? "—" : (v > 0 ? "+" : "") + fN(v, d); }
+function cls(v){ return isN(v) || v === 0 ? "" : (v > 0 ? "up" : "dn"); }
+function parseTs(s){ return new Date(String(s).replace(" ", "T")); }
+const dtf = new Intl.DateTimeFormat("zh-CN",{timeZone:"Asia/Shanghai",hour12:false,month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit"});
+const dtfS = new Intl.DateTimeFormat("zh-CN",{timeZone:"Asia/Shanghai",hour12:false,hour:"2-digit",minute:"2-digit",second:"2-digit"});
+const dtfD = new Intl.DateTimeFormat("zh-CN",{timeZone:"Asia/Shanghai",hour12:false,month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",second:"2-digit"});
+function fT(s){ return dtf.format(parseTs(s)); }
+function fTS(d){ return dtfS.format(d); }
+function fTD(d){ return dtfD.format(d); }
+function dur(ms){
+  if (ms < 0) ms = 0;
+  const m = Math.floor(ms/60000), h = Math.floor(m/60), d = Math.floor(h/24);
+  if (d > 0) return d + " 天 " + (h%24) + " 小时";
+  if (h > 0) return h + " 小时 " + (m%60) + " 分";
+  return m + " 分";
 }
 
-function nextRound() { // 记账锚点约在每刻钟的 :05/:20/:35/:50
-  const n = new Date(), m = n.getMinutes(), s = n.getSeconds();
-  const marks = [5, 20, 35, 50, 65]; const t = marks.find(x => x > m || (x === m && s > 0)) ?? 65;
-  return Math.max(0, (t - m) * 60 - s);
+/* ================= 状态 ================= */
+const S = {
+  sum:null, hist:[], bt:null, scan:null,
+  prices:{}, prevPrices:{}, lastTick:null, tickOk:false,
+  livePts:[], prevUn:{}, feed:[], openFirstMtm:null
+};
+const roster = () => S.sum.roster;
+const names = () => Object.keys(roster());
+function totReal(){ return names().reduce((a,n) => a + (roster()[n].equity || 0), 0); }
+function liveUnreal(n){
+  const v = roster()[n], op = v.open_position, px = S.prices.BTCUSDT;
+  if (!op || isN(px)) return v.unrealized_pnl;
+  return Math.round(op.qty * (px - op.entry) * op.dir * 100) / 100;
 }
-setInterval(() => {
-  const c = nextRound(), txt = `约 ${Math.floor(c / 60)} 分 ${String(c % 60).padStart(2, "0")} 秒`;
-  if ($("#ovCount")) $("#ovCount").textContent = txt;
-  if ($("#lvCount")) $("#lvCount").textContent = txt;
-  $("#liveClock").textContent = "本地时间 " + new Date().toLocaleTimeString("zh-CN", { hour12: false });
-}, 1000);
+function liveMtm(n){
+  const v = roster()[n], u = liveUnreal(n);
+  return isN(u) ? v.equity : Math.round((v.equity + u) * 100) / 100;
+}
+function totMtm(){ return names().reduce((a,n) => a + liveMtm(n), 0); }
+function totUn(){ return names().reduce((a,n) => a + (liveUnreal(n) || 0), 0); }
 
-function liveMtm(name) { // 秒级盯市：用最新价重算浮盈与盯市权益
-  const v = S.roster[name]; if (!v) return { mtm: null, unreal: null };
-  const op = v.open_position;
-  if (!op) return { mtm: v.equity_mtm, unreal: null };
-  const px = livePx.BTCUSDT; if (!px) return { mtm: v.equity_mtm, unreal: v.unrealized_pnl };
-  const u = op.qty * (px - op.entry) * op.dir;
-  return { mtm: v.equity + u, unreal: u };
-}
-function paintLive() {
-  if (!S) return;
-  let tot = 0;
-  for (const n of Object.keys(S.roster)) {
-    const { mtm, unreal } = liveMtm(n); tot += mtm ?? 0;
-    document.querySelectorAll(`[data-mtm="${n}"]`).forEach(el => {
-      const old = lastLive[n]; el.textContent = fmt(mtm) + " U";
-      if (old != null && mtm != null && Math.abs(mtm - old) > 0.004) {
-        el.classList.remove("flash-up", "flash-dn"); void el.offsetWidth;
-        el.classList.add(mtm > old ? "flash-up" : "flash-dn");
-      }});
-    document.querySelectorAll(`[data-unreal="${n}"]`).forEach(el => {
-      el.textContent = unreal == null ? "—" : fmt(unreal) + " U";
-      el.className = sgn(unreal); });
-    lastLive[n] = mtm;
+/* ================= 图表 ================= */
+function setupCanvas(cv){
+  const dpr = window.devicePixelRatio || 1;
+  const w = cv.clientWidth, h = cv.clientHeight || Number(cv.getAttribute("height")) || 120;
+  if (cv.width !== Math.round(w*dpr) || cv.height !== Math.round(h*dpr)){
+    cv.width = Math.round(w*dpr); cv.height = Math.round(h*dpr);
   }
-  const lv = $("#lvMtm"); if (lv) lv.textContent = fmt(tot) + " U";
-  const ov = $("#ovMtm"); if (ov && !livePx.BTCUSDT) ov.textContent = fmt(tot) + " U";
+  const ctx = cv.getContext("2d");
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  return [ctx, w, h];
 }
-async function tick() {
-  try {
-    const r = await fetch("https://api.bitget.com/api/v2/mix/market/ticker?symbol=BTCUSDT&productType=USDT-FUTURES");
-    const j = await r.json(); livePx.BTCUSDT = parseFloat(j.data[0].lastPr); paintLive();
-  } catch (e) { /* 保持上次盯市值 */ }
+function drawLine(cv, vals, opt={}){
+  if (!cv || !cv.clientWidth) return;
+  const [ctx, w, h] = setupCanvas(cv);
+  ctx.clearRect(0,0,w,h);
+  if (!vals || vals.length < 2){
+    ctx.fillStyle = "#5b6577"; ctx.font = "11px sans-serif";
+    ctx.fillText("数据积累中…", 8, 16); return;
+  }
+  let mn = Math.min(...vals), mx = Math.max(...vals);
+  if (opt.base !== undefined){ mn = Math.min(mn, opt.base); mx = Math.max(mx, opt.base); }
+  const pad = (mx - mn) * 0.12 || 1; mn -= pad; mx += pad;
+  const X = i => 4 + i * (w - 8) / (vals.length - 1);
+  const Y = v => 5 + (mx - v) / (mx - mn) * (h - 12);
+  ctx.strokeStyle = "rgba(255,255,255,.06)"; ctx.lineWidth = 1;
+  for (let g = 1; g <= 3; g++){ const y = h*g/4; ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(w,y); ctx.stroke(); }
+  if (opt.base !== undefined && opt.base > mn && opt.base < mx){
+    ctx.strokeStyle = "rgba(255,255,255,.16)"; ctx.setLineDash([4,4]);
+    ctx.beginPath(); ctx.moveTo(0, Y(opt.base)); ctx.lineTo(w, Y(opt.base)); ctx.stroke(); ctx.setLineDash([]);
+  }
+  const color = opt.color || "#35c4ff";
+  ctx.beginPath();
+  vals.forEach((v,i) => {
+    const x = X(i), y = Y(v);
+    if (i === 0) ctx.moveTo(x,y);
+    else if (opt.step) { ctx.lineTo(x, Y(vals[i-1])); ctx.lineTo(x, y); }
+    else ctx.lineTo(x, y);
+  });
+  ctx.strokeStyle = color; ctx.lineWidth = 1.4; ctx.stroke();
+  if (opt.fill){
+    ctx.lineTo(X(vals.length-1), h); ctx.lineTo(X(0), h); ctx.closePath();
+    ctx.fillStyle = opt.fill; ctx.fill();
+  }
+  const lv = vals[vals.length-1];
+  ctx.beginPath(); ctx.arc(X(vals.length-1), Y(lv), 2.4, 0, 7); ctx.fillStyle = color; ctx.fill();
+  ctx.fillStyle = "#8a94a6"; ctx.font = "10px sans-serif";
+  ctx.fillText(fN(mx - pad, 0), 5, 11);
+  ctx.fillText(fN(mn + pad, 0), 5, h - 3);
 }
 
-function render() {
-  const R = S.roster, names = Object.keys(R);
-  $("#genAt").textContent = sT(S.generated_at);
-  $("#ovBtc").textContent = fmt(S.prices.BTCUSDT, 1);
-  $("#ovTsla").textContent = fmt(S.prices.TSLAUSDT, 2);
-  $("#ovSpcx").textContent = fmt(S.prices.SPCXUSDT, 2);
-  const open = names.filter(n => R[n].open_position);
-  $("#ovOpen").textContent = open.length ? open.map(n => NAMES[n]).join("、") : "无（全部空仓）";
-  const lead = [...names].sort((a, b) => R[b].equity_mtm - R[a].equity_mtm)[0];
-  $("#ovLead").textContent = `${NAMES[lead]} · ${fmt(R[lead].equity_mtm)} U`;
-  $("#ovMtm").textContent = fmt(names.reduce((a, n) => a + R[n].equity_mtm, 0)) + " U";
+/* ================= 流水 ================= */
+function pushFeed(t, kind, html, front){
+  S.feed.push({t, kind, html});
+  S.feed.sort((a,b) => b.t - a.t);
+  S.feed = S.feed.slice(0, 40);
+  renderFeed();
+}
+function renderFeed(){
+  const mk = items => items.map(f =>
+    `<li><span class="ft num">${fTD(f.t)}</span><span class="tag ${f.kind === "live" ? "up" : "acc"}">${f.kind === "live" ? "实时盯市" : "记账"}</span><span class="fx">${f.html}</span></li>`).join("");
+  const html = mk(S.feed) || `<li><span class="sub">暂无动态</span></li>`;
+  $("lvFeed").innerHTML = html;
+  $("ovFeed").innerHTML = mk(S.feed.slice(0, 7)) || html;
+}
+function buildFeed(){
+  const items = [];
+  // 记账：近 24h 平仓（带盈亏明细）
+  names().forEach(n => (roster()[n].closed_last_24h || []).forEach(c => {
+    items.push({t: parseTs(c.exit_dt), kind:"acct",
+      html:`<b>${esc(NAME[n])}</b> 平仓 ${c.dir > 0 ? "多" : "空"}单 · 盈亏 <b class="${cls(c.pnl)} num">${fS(c.pnl)} U</b> · 平后权益 ${fN(c.eq_after)}`});
+  }));
+  // 记账：历史记账点之间的开仓 / 笔数变化
+  for (let i = 1; i < S.hist.length; i++){
+    const a = S.hist[i-1].strategies, b = S.hist[i].strategies, t = parseTs(S.hist[i].ts);
+    names().forEach(n => {
+      const x = a[n], y = b[n]; if (!x || !y) return;
+      if ((y.trades || 0) > (x.trades || 0) && !(roster()[n].closed_last_24h || []).length)
+        items.push({t, kind:"acct", html:`<b>${esc(NAME[n])}</b> 记账确认平仓 ${(y.trades||0)-(x.trades||0)} 笔`});
+      if (!x.open_dir && y.open_dir)
+        items.push({t, kind:"acct", html:`<b>${esc(NAME[n])}</b> 记账确认开仓 · ${y.open_dir > 0 ? "做多" : "做空"}`});
+    });
+  }
+  // 实时盯市：相邻盯市点浮盈单步变动 > 0.5U
+  const pts = S.livePts;
+  for (let i = 1; i < pts.length; i++){
+    names().forEach(n => {
+      const a = pts[i-1].un[n], b = pts[i].un[n];
+      if (!isN(a) && !isN(b) && Math.abs(b - a) > 0.5)
+        items.push({t: pts[i].t, kind:"live",
+          html:`<b>${esc(NAME[n])}</b> 浮${b >= a ? "盈扩大" : "盈回落"} <span class="num">${fS(a)} → ${fS(b)} U</span>`});
+    });
+  }
+  S.feed = items.sort((x,y) => y.t - x.t).slice(0, 40);
+  renderFeed();
+}
 
-  // 模拟盘排行榜
-  $("#ppCards").innerHTML = [...names].sort((a, b) => R[b].equity_mtm - R[a].equity_mtm).map((n, i) => {
-    const v = R[n], op = v.open_position;
-    const pos = op ? `<div class="row"><span class="k">持仓</span><span class="${op.dir > 0 ? "up" : "dn"}">${op.dir > 0 ? "多" : "空"} · 进场 ${fmt(op.entry, 1)} · 止损 ${op.stop} · 止盈 ${op.tp ?? "—"}</span></div>
-      <div class="row"><span class="k">开仓时间</span><span>${sT(op.entry_dt)}</span></div>` : `<div class="row"><span class="k">持仓</span><span>空仓</span></div>`;
-    const closes = (v.closed_last_24h || []).map(t =>
-      `<div class="row"><span class="k">${sT(t.exit_dt)} 平${t.dir > 0 ? "多" : "空"}</span><span class="${sgn(t.pnl)}">${fmt(t.pnl)} U</span></div>`).join("");
-    return `<div class="card" style="margin-bottom:10px"><h3>#${i + 1} ${NAMES[n]}</h3>
-      <div class="row"><span class="k">盯市权益（秒级）</span><b data-mtm="${n}">${fmt(v.equity_mtm)} U</b></div>
-      <div class="row"><span class="k">已实现权益</span><span>${fmt(v.equity)} U</span></div>
-      <div class="row"><span class="k">浮动盈亏（秒级）</span><span data-unreal="${n}" class="${sgn(v.unrealized_pnl)}">${fmt(v.unrealized_pnl)} U</span></div>
-      <div class="row"><span class="k">笔数 / 胜率 / 期望</span><span>${v.trades} 笔 · ${v.win_rate_pct == null ? "—" : v.win_rate_pct + "%"} · ${fmt(v.expectancy)} U</span></div>
-      <div class="row"><span class="k">最大回撤</span><span>${fmt(v.max_dd_pct, 1)}%</span></div>${pos}
-      ${closes ? `<div style="margin-top:4px"><span class="k">近 24 小时平仓</span>${closes}</div>` : ""}</div>`;
+/* ================= 静态渲染 ================= */
+function renderRank(){
+  const rows = names().slice().sort((a,b) => liveMtm(b) - liveMtm(a));
+  $("ovRank").innerHTML =
+    `<tr><th class="l">策略</th><th>笔数</th><th>胜率</th><th>已实现</th><th>盯市权益</th><th>浮盈</th></tr>` +
+    rows.map(n => { const v = roster()[n], u = liveUnreal(n); return `<tr>
+      <td class="l"><b>${esc(NAME[n])}</b> ${v.open_position ? `<span class="tag ${v.open_position.dir > 0 ? "up" : "dn"}">${v.open_position.dir > 0 ? "多" : "空"}</span>` : ""}</td>
+      <td class="num">${v.trades}</td>
+      <td class="num">${isN(v.win_rate_pct) ? "—" : fN(v.win_rate_pct, 0) + "%"}</td>
+      <td class="num">${fN(v.equity)}</td>
+      <td class="num"><b id="rk-mtm-${n}">${fN(liveMtm(n))}</b></td>
+      <td class="num ${cls(u)}" id="rk-un-${n}">${isN(u) ? "—" : fS(u)}</td></tr>`; }).join("");
+}
+function posSummaryHTML(){
+  const open = names().filter(n => roster()[n].open_position);
+  if (!open.length) return `<span class="sub">当前全部空仓，无持仓。</span>`;
+  return open.map(n => {
+    const op = roster()[n].open_position, u = liveUnreal(n), px = S.prices.BTCUSDT;
+    return `<div class="kv"><span class="k"><b style="color:var(--txt)">${esc(NAME[n])}</b> <span class="tag ${op.dir > 0 ? "up" : "dn"}">${op.dir > 0 ? "做多" : "做空"}</span> 进场 <span class="num">${fN(op.entry, 1)}</span> · 现价 <span class="num" id="ovp-px-${n}">${isN(px) ? "…" : fN(px, 1)}</span></span><b class="num ${cls(u)}" id="ovp-un-${n}">${isN(u) ? "—" : fS(u) + " U"}</b></div>`;
   }).join("");
-
-  // 实时页策略小卡
-  $("#lvCards").innerHTML = names.map(n => {
-    const v = R[n];
-    return `<div class="card"><h3>${NAMES[n]}</h3>
-      <div class="row"><span class="k">盯市权益</span><b data-mtm="${n}">${fmt(v.equity_mtm)} U</b></div>
-      <div class="row"><span class="k">浮动盈亏</span><span data-unreal="${n}" class="${sgn(v.unrealized_pnl)}">${fmt(v.unrealized_pnl)} U</span></div>
-      <canvas data-chart="${n}" height="54"></canvas></div>`;
-  }).join("");
-
-  // 动态流水：对比相邻记账快照
-  const ev = [];
-  for (let i = 1; i < H.length; i++) {
-    const a = H[i - 1].strategies, b = H[i].strategies, ts = sT(H[i].ts);
-    for (const n of Object.keys(b)) {
-      const x = a[n], y = b[n]; if (!x || !y) continue;
-      if (y.trades > x.trades) ev.push([H[i].ts, `${ts} · ${NAMES[n]}：完成平仓 ${y.trades - x.trades} 笔（权益 ${fmt(x.equity)} → ${fmt(y.equity)} U）`]);
-      if (x.open_dir == null && y.open_dir != null) ev.push([H[i].ts, `${ts} · ${NAMES[n]}：新开${y.open_dir > 0 ? "多" : "空"}单`]);
-      if (x.open_dir != null && y.open_dir == null && !(y.trades > x.trades)) ev.push([H[i].ts, `${ts} · ${NAMES[n]}：持仓离场`]);
+}
+function renderPaper(){
+  const rows = names().slice().sort((a,b) => liveMtm(b) - liveMtm(a));
+  $("pmTable").innerHTML =
+    `<tr><th class="l">策略</th><th class="l">规则</th><th class="l">状态</th><th>笔数</th><th>胜率</th><th>期望/笔</th><th>最大回撤</th><th>已实现权益</th><th>盯市权益</th><th>浮盈</th></tr>` +
+    rows.map(n => { const v = roster()[n], u = liveUnreal(n), op = v.open_position; return `<tr>
+      <td class="l"><b>${esc(NAME[n])}</b></td>
+      <td class="l sub">${esc(SUB[n])}</td>
+      <td class="l">${op ? `<span class="tag ${op.dir > 0 ? "up" : "dn"}">${op.dir > 0 ? "做多" : "做空"} @ ${fN(op.entry, 0)}</span>` : `<span class="tag">空仓</span>`}</td>
+      <td class="num">${v.trades}</td>
+      <td class="num">${isN(v.win_rate_pct) ? "—" : fN(v.win_rate_pct, 0) + "%"}</td>
+      <td class="num ${cls(v.expectancy)}">${isN(v.expectancy) ? "—" : fS(v.expectancy)}</td>
+      <td class="num dn">${isN(v.max_dd_pct) ? "—" : fN(v.max_dd_pct, 1) + "%"}</td>
+      <td class="num">${fN(v.equity)}</td>
+      <td class="num"><b id="pm-mtm-${n}">${fN(liveMtm(n))}</b></td>
+      <td class="num ${cls(u)}" id="pm-un-${n}">${isN(u) ? "—" : fS(u)}</td></tr>`; }).join("");
+  // 平仓表
+  const closed = [];
+  names().forEach(n => (roster()[n].closed_last_24h || []).forEach(c => closed.push({n, ...c})));
+  closed.sort((a,b) => parseTs(b.exit_dt) - parseTs(a.exit_dt));
+  $("pmClosed").innerHTML =
+    `<tr><th class="l">策略</th><th class="l">方向</th><th class="l">进场（北京）</th><th class="l">出场（北京）</th><th>盈亏 U</th><th>平后权益</th></tr>` +
+    (closed.map(c => `<tr><td class="l"><b>${esc(NAME[c.n])}</b></td>
+      <td class="l"><span class="tag ${c.dir > 0 ? "up" : "dn"}">${c.dir > 0 ? "做多" : "做空"}</span></td>
+      <td class="l num">${fT(c.entry_dt)}</td><td class="l num">${fT(c.exit_dt)}</td>
+      <td class="num ${cls(c.pnl)}"><b>${fS(c.pnl)}</b></td><td class="num">${fN(c.eq_after)}</td></tr>`).join("")
+      || `<tr><td class="l sub" colspan="6">近 24 小时暂无平仓</td></tr>`);
+  renderPosDetail();
+}
+function renderPosDetail(){
+  const open = names().filter(n => roster()[n].open_position);
+  const html = open.length ? open.map(n => {
+    const op = roster()[n].open_position;
+    return `<div style="padding:7px 0;border-bottom:1px solid var(--line)">
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:baseline">
+        <b>${esc(NAME[n])}</b><span class="sub" style="font-size:11px">${esc(SUB[n])}</span>
+        <span class="tag ${op.dir > 0 ? "up" : "dn"}">${op.dir > 0 ? "做多" : "做空"}</span>
+        <span class="sub">进场 <span class="num">${fT(op.entry_dt)}</span> · 已持仓 <b class="num" id="pd-dur-${n}" style="color:var(--txt)">…</b></span>
+        <span style="margin-left:auto" class="num">浮盈 <b class="${cls(liveUnreal(n))}" id="pd-un-${n}">${isN(liveUnreal(n)) ? "—" : fS(liveUnreal(n)) + " U"}</b> <span class="sub" id="pd-unp-${n}"></span></span>
+      </div>
+      <div class="tw"><table class="tbl" style="margin-top:4px">
+        <tr><th class="l">进场价</th><th class="l">现价（实时）</th><th class="l">数量 BTC</th><th class="l">止损</th><th class="l">距止损</th><th class="l">止盈</th><th class="l">距止盈</th></tr>
+        <tr>
+          <td class="l num">${fN(op.entry, 1)}</td>
+          <td class="l num" id="pd-px-${n}">…</td>
+          <td class="l num">${fN(op.qty, 4)}</td>
+          <td class="l num dn">${fN(op.stop, 0)}</td>
+          <td class="l num" id="pd-dsl-${n}">…</td>
+          <td class="l num up">${fN(op.tp, 0)}</td>
+          <td class="l num" id="pd-dtp-${n}">…</td>
+        </tr></table></div>
+      <div class="posbar" id="pd-bar-${n}"><div class="mk"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:10.5px" class="dim num"><span>止损 ${fN(op.stop, 0)}</span><span>进场 ${fN(op.entry, 0)}</span><span>止盈 ${fN(op.tp, 0)}</span></div>
+    </div>`;
+  }).join("") : `<span class="sub">当前全部空仓，无持仓明细。</span>`;
+  $("pmPos").innerHTML = html;
+  updatePosDetail();
+}
+function updatePosDetail(){
+  const px = S.prices.BTCUSDT;
+  names().forEach(n => {
+    const op = roster()[n].open_position; if (!op) return;
+    const u = liveUnreal(n);
+    const set = (id, txt, cl) => { const e = $(id); if (e){ e.textContent = txt; if (cl !== undefined) e.className = "num " + cl; } };
+    set("pd-px-" + n, isN(px) ? "…" : fN(px, 1));
+    const unEl = $("pd-un-" + n);
+    if (unEl){ unEl.textContent = isN(u) ? "—" : fS(u) + " U"; unEl.className = cls(u); }
+    const pctEl = $("pd-unp-" + n);
+    if (pctEl && !isN(px) && !isN(u)) pctEl.textContent = "(" + fS(u / (op.qty * op.entry) * 100) + "%)";
+    if (!isN(px)){
+      set("pd-dsl-" + n, fN(Math.abs(px - op.stop) / px * 100) + "%");
+      set("pd-dtp-" + n, fN(Math.abs(px - op.tp) / px * 100) + "%");
+      const bar = $("pd-bar-" + n);
+      if (bar){
+        const lo = Math.min(op.stop, op.tp), hi = Math.max(op.stop, op.tp);
+        const frac = Math.max(0, Math.min(1, (px - lo) / (hi - lo)));
+        bar.querySelector(".mk").style.left = (frac * 100) + "%";
+      }
     }
-  }
-  $("#lvFeed").innerHTML = ev.length ? ev.slice(-20).reverse().map(e => `<div>${e[1]}</div>`).join("")
-                                     : "<div>暂无开平仓动态，等待新一轮记账。</div>";
-
-  // 毕业进度
-  const weeks = Math.max(0, (Date.now() - new Date(S.paper_start).getTime()) / 6048e5);
-  $("#grCards").innerHTML = names.map(n => {
-    const v = R[n], tp = Math.min(100, v.trades / 30 * 100), wp = Math.min(100, weeks / 8 * 100);
-    const eOk = v.expectancy != null && v.expectancy > 0, dOk = Math.abs(v.max_dd_pct) <= 15;
-    return `<div class="card" style="margin-bottom:10px"><h3>${NAMES[n]}
-      <span class="pill ${v.trades >= 30 || weeks >= 8 ? "ok" : ""}">样本 ${v.trades >= 30 || weeks >= 8 ? "已够" : "积累中"}</span>
-      <span class="pill ${eOk ? "ok" : ""}">期望 ${eOk ? "为正" : "未达标"}</span>
-      <span class="pill ${dOk ? "ok" : ""}">回撤 ${dOk ? "合格" : "超标"}</span></h3>
-      <div class="k">前向笔数 ${v.trades} / 30</div><div class="bar"><i style="width:${tp}%"></i></div>
-      <div class="k" style="margin-top:6px">前向周数 ${weeks.toFixed(1)} / 8</div><div class="bar"><i style="width:${wp}%"></i></div>
-      <div class="row" style="margin-top:6px"><span class="k">每笔期望</span><span class="${sgn(v.expectancy)}">${fmt(v.expectancy)} U</span></div>
-      <div class="row"><span class="k">最大回撤</span><span>${fmt(v.max_dd_pct, 1)}%</span></div></div>`;
-  }).join("");
-  drawAll();
-}
-function drawAll() {
-  if (!H.length) return;
-  const pf = $("#pfChart");
-  if (pf && $("#p-live").classList.contains("on")) {
-    const keys = Object.keys(H[0].strategies);
-    drawLine(pf, H.map(h => keys.reduce((a, k) => a + (h.strategies[k]?.equity_mtm ?? 400), 0)), "#58a6ff");
-  }
-  document.querySelectorAll("canvas[data-chart]").forEach(cv => {
-    const n = cv.dataset.chart;
-    drawLine(cv, H.map(h => h.strategies[n]?.equity_mtm).filter(x => x != null), "#3fb950");
+    const durEl = $("pd-dur-" + n);
+    if (durEl) durEl.textContent = dur(Date.now() - parseTs(op.entry_dt).getTime());
+    const o1 = $("ovp-px-" + n); if (o1) o1.textContent = isN(px) ? "…" : fN(px, 1);
+    const o2 = $("ovp-un-" + n); if (o2){ o2.textContent = isN(u) ? "—" : fS(u) + " U"; o2.className = "num " + cls(u); }
   });
 }
-
-async function load() {
-  const [s, h, b, sc] = await Promise.all([
-    fetch("data/paper_summary.json").then(r => r.json()),
-    fetch("data/paper_history.json").then(r => r.json()),
-    fetch("data/backtest_results.json").then(r => r.json()),
-    fetch("data/donchian_scan.json").then(r => r.json()) ]);
-  S = s; H = h; render();
-  const btName = { donchian: "唐奇安", rsi2: "RSI(2)", bb_rsi: "布林+RSI" };
-  $("#btTable").innerHTML = `<table><tr><th>标的</th><th>策略</th><th>样本</th><th>笔数</th><th>胜率%</th><th>期望/笔</th><th>利润因子</th><th>总收益%</th><th>最大回撤%</th><th>期末权益</th></tr>` +
-    Object.entries(b).map(([k, v]) => { const [sym, st, seg] = k.split("|");
-      return `<tr><td>${sym}</td><td>${btName[st] || st}</td><td>${seg === "IS_70" ? "内" : "外"}</td><td>${v.trades}</td><td>${v.win_rate_pct}</td><td class="${sgn(v.expectancy_per_trade)}">${v.expectancy_per_trade}</td><td>${v.profit_factor}</td><td class="${sgn(v.total_return_pct)}">${v.total_return_pct}</td><td>${v.max_dd_pct}</td><td>${v.final_equity}</td></tr>`; }).join("") + "</table>";
-  $("#scanTable").innerHTML = `<table><tr><th>通道</th><th>出场</th><th>样本内期望</th><th>内笔数</th><th>内回撤%</th><th>样本外期望</th><th>外笔数</th><th>外回撤%</th><th>外利润因子</th><th>外胜率%</th></tr>` +
-    sc.filter(r => r.risk_pct === 0.5).map(r =>
-      `<tr><td>${r.channel}</td><td>${r.exit_ch}</td><td class="${sgn(r.IS_exp)}">${r.IS_exp}</td><td>${r.IS_trades}</td><td>${r.IS_dd}</td><td class="${sgn(r.OOS_exp)}">${r.OOS_exp}</td><td>${r.OOS_trades}</td><td>${r.OOS_dd}</td><td>${r.OOS_pf}</td><td>${r.OOS_wr}</td></tr>`).join("") + "</table>";
-  tick(); setInterval(tick, 5000);
+function renderGrad(){
+  const weeks = (Date.now() - START.getTime()) / (7 * 864e5);
+  $("grCards").innerHTML = names().map(n => {
+    const v = roster()[n];
+    const tPct = Math.min(100, v.trades / 30 * 100);
+    const wPct = Math.min(100, weeks / 8 * 100);
+    const ddAbs = isN(v.max_dd_pct) ? 0 : Math.abs(v.max_dd_pct);
+    const ddPct = Math.min(100, ddAbs / 15 * 100);
+    const expOk = !isN(v.expectancy) && v.expectancy > 0;
+    const ddOk = ddAbs <= 15;
+    const sampleOk = v.trades >= 30 || weeks >= 8;
+    let miss = [];
+    if (!sampleOk) miss.push("样本量");
+    if (!expOk) miss.push("期望");
+    if (!ddOk) miss.push("回撤");
+    const done = miss.length === 0;
+    const row = (lab, val, pct, barCls, extra="") =>
+      `<div style="margin-top:7px"><div style="display:flex;justify-content:space-between;font-size:11.5px"><span class="sub">${lab}</span><span class="num">${val} ${extra}</span></div><div class="bar" style="margin-top:3px"><i class="${barCls}" style="width:${pct}%"></i></div></div>`;
+    return `<div class="card">
+      <h3>${esc(NAME[n])} ${done ? `<span class="tag up">已达毕业标准</span>` : `<span class="tag warn">还差 ${miss.join("、")}</span>`}</h3>
+      <div class="sub" style="font-size:11px">${esc(SUB[n])} · 已实现 <b class="num" style="color:var(--txt)">${fN(v.equity)}</b> U</div>
+      ${row("交易笔数 / 30 笔", v.trades + " 笔", tPct, v.trades >= 30 ? "up" : "")}
+      ${row("运行时间 / 8 周", weeks.toFixed(1) + " 周", wPct, weeks >= 8 ? "up" : "")}
+      ${row("每笔期望（须 &gt; 0）", isN(v.expectancy) ? "暂无成交样本" : fS(v.expectancy) + " U", isN(v.expectancy) ? 0 : (expOk ? 100 : 30), expOk ? "up" : "dn",
+          isN(v.expectancy) ? "" : (expOk ? `<span class="tag up">为正 ✓</span>` : `<span class="tag dn">未达标</span>`))}
+      ${row("最大回撤 / 上限 15%", fN(ddAbs, 1) + "%", ddPct, ddOk ? (ddPct > 60 ? "warn" : "up") : "dn",
+          ddOk ? `<span class="tag up">限内 ✓</span>` : `<span class="tag dn">超限</span>`)}
+    </div>`;
+  }).join("");
 }
-load().catch(e => { document.querySelector("#genAt").textContent = "数据加载失败：" + e.message; });
-addEventListener("resize", drawAll);
+function heatBg(v, scale){
+  if (isN(v) || v === 0) return "";
+  const a = Math.min(0.38, Math.abs(v) / scale * 0.38).toFixed(2);
+  return ` style="background:${v > 0 ? "rgba(22,199,132," + a + ")" : "rgba(234,57,67," + a + ")"}"`;
+}
+function renderBacktest(){
+  const syms = ["BTCUSDT","TSLAUSDT","SPCXUSDT"], strats = ["donchian","rsi2","bb_rsi"];
+  let html = `<tr><th class="l">标的 · 策略</th><th class="l">段</th><th>笔数</th><th>胜率</th><th>平均盈</th><th>平均亏</th><th>期望/笔</th><th>PF</th><th>总收益</th><th>CAGR</th><th>最大回撤</th><th>期末权益</th><th class="l">判定</th></tr>`;
+  syms.forEach(sym => strats.forEach(st => {
+    const is = S.bt[`${sym}|${st}|IS_70`], oos = S.bt[`${sym}|${st}|OOS_30`];
+    if (!is || !oos) return;
+    const both = is.expectancy_per_trade > 0 && oos.expectancy_per_trade > 0;
+    const tiny = Math.min(is.trades, oos.trades) < 10;
+    let verdict, vcls;
+    if (sym === "BTCUSDT" && st === "donchian"){ verdict = "唯一存活 · 看扫描高原"; vcls = "up"; }
+    else if (both && !tiny){ verdict = "两段皆正"; vcls = "up"; }
+    else if (tiny){ verdict = "样本不足 · 不作数"; vcls = "warn"; }
+    else { verdict = "淘汰"; vcls = "dn"; }
+    [ ["样本内", is], ["样本外", oos] ].forEach(([lab, r], i) => {
+      html += `<tr>
+        ${i === 0 ? `<td class="l" rowspan="2"><b>${sym.replace("USDT","")}</b> · ${BTNAME[st]}</td>` : ""}
+        <td class="l sub">${lab}</td>
+        <td class="num">${r.trades}</td>
+        <td class="num">${fN(r.win_rate_pct, 1)}%</td>
+        <td class="num up">${fS(r.avg_win)}</td>
+        <td class="num dn">${fS(r.avg_loss)}</td>
+        <td class="num" ${heatBg(r.expectancy_per_trade, 3)}><b>${fS(r.expectancy_per_trade)}</b></td>
+        <td class="num">${fN(r.profit_factor)}</td>
+        <td class="num" ${heatBg(r.total_return_pct, 50)}>${fS(r.total_return_pct, 1)}%</td>
+        <td class="num">${fS(r.cagr_pct, 1)}%</td>
+        <td class="num dn">${fN(r.max_dd_pct, 1)}%</td>
+        <td class="num">${fN(r.final_equity)}</td>
+        ${i === 0 ? `<td class="l" rowspan="2"><span class="tag ${vcls}">${verdict}</span><div class="dim" style="font-size:10.5px;margin-top:2px">${esc(is.span)}</div></td>` : ""}
+      </tr>`;
+    });
+  }));
+  $("btTable").innerHTML = html;
+  $("scTable").innerHTML =
+    `<tr><th class="l">通道 / 出场</th><th>单笔风险</th><th>样本内期望</th><th>内笔数</th><th>内回撤</th><th>内收益</th><th>样本外期望</th><th>外笔数</th><th>外 PF</th><th>外胜率</th><th>外回撤</th><th>外收益</th><th class="l">形态</th></tr>` +
+    S.scan.map(r => {
+      const plat = r.IS_exp > 0 && r.OOS_exp > 0;
+      return `<tr>
+        <td class="l"><b>${r.channel}</b> / ${r.exit_ch}</td>
+        <td class="num">${fN(r.risk_pct, 1)}%</td>
+        <td class="num" ${heatBg(r.IS_exp, 1)}>${fS(r.IS_exp)}</td>
+        <td class="num">${r.IS_trades}</td><td class="num dn">${fN(r.IS_dd, 1)}%</td><td class="num">${fS(r.IS_ret, 1)}%</td>
+        <td class="num" ${heatBg(r.OOS_exp, 2)}>${fS(r.OOS_exp)}</td>
+        <td class="num">${r.OOS_trades}</td><td class="num">${fN(r.OOS_pf)}</td><td class="num">${fN(r.OOS_wr, 1)}%</td>
+        <td class="num dn">${fN(r.OOS_dd, 1)}%</td><td class="num">${fS(r.OOS_ret, 1)}%</td>
+        <td class="l">${plat ? `<span class="tag up">高原</span>` : `<span class="tag">—</span>`}</td></tr>`;
+    }).join("");
+}
+</script>
+
+<script>
+"use strict";
+/* ================= 实时更新 ================= */
+function flash(el, dir){
+  if (!el) return;
+  el.classList.remove("flash-up","flash-dn"); void el.offsetWidth;
+  el.classList.add(dir > 0 ? "flash-up" : "flash-dn");
+}
+function renderLvCards(){
+  $("lvCards").innerHTML = names().map(n => {
+    const v = roster()[n], op = v.open_position, u = liveUnreal(n);
+    return `<div class="card">
+      <h3 style="margin-bottom:3px">${esc(NAME[n])} ${op ? `<span class="tag ${op.dir > 0 ? "up" : "dn"}">${op.dir > 0 ? "多" : "空"} @ ${fN(op.entry, 0)}</span>` : `<span class="tag">空仓</span>`}</h3>
+      <div style="display:flex;justify-content:space-between;align-items:baseline">
+        <b class="num" style="font-size:16px" id="lc-mtm-${n}">${fN(liveMtm(n))}</b>
+        <span class="num ${cls(u)}" id="lc-un-${n}" style="font-size:12px">${isN(u) ? "已实现 " + fN(v.equity) : "浮盈 " + fS(u)}</span>
+      </div>
+      <canvas class="chart" id="lc-cv-${n}" height="44" style="margin-top:4px"></canvas>
+      <div class="sub" style="font-size:10.5px;margin-top:2px">${esc(SUB[n])}</div>
+    </div>`;
+  }).join("");
+}
+function drawCharts(){
+  const tot = S.livePts.map(p => p.tot);
+  drawLine($("lvChart"), tot, {color:"#35c4ff", fill:"rgba(53,196,255,.07)", base:3600});
+  drawLine($("ovLiveChart"), tot, {color:"#35c4ff", fill:"rgba(53,196,255,.07)", base:3600});
+  names().forEach(n => drawLine($("lc-cv-" + n), S.livePts.map(p => p.eq[n]), {color:"#f0b90b", base:400}));
+  const real = S.hist.map(p => names().reduce((a,n) => a + ((p.strategies[n] || {}).equity || 0), 0));
+  drawLine($("lvRealChart"), real, {color:"#16c784", step:true, base:3600});
+  drawLine($("ovRealChart"), real, {color:"#16c784", step:true, base:3600});
+  $("lvPts").textContent = S.livePts.length + " 点";
+}
+function paintLive(first){
+  // 价格条
+  SYMS.forEach(sym => {
+    const px = S.prices[sym], base = S.sum.prices[sym], el = $("px-" + sym);
+    if (el && !isN(px)){
+      const old = Number(el.dataset.v);
+      el.textContent = fN(px, px >= 1000 ? 1 : 2);
+      if (!first && !isN(old) && px !== old) flash(el.parentElement, px - old);
+      el.dataset.v = px;
+      const d = $("pxd-" + sym);
+      if (d && !isN(base)){
+        const pct = (px - base) / base * 100;
+        d.textContent = fS(pct) + "%"; d.className = "delta " + cls(pct);
+        $("pxb-" + sym).textContent = fN(base, base >= 1000 ? 1 : 2);
+      }
+    }
+  });
+  // 统计卡
+  const mtm = totMtm(), real = totReal(), un = totUn();
+  const mEl = $("stMtm");
+  if (mEl){ const old = Number(mEl.dataset.v); mEl.textContent = fN(mtm); if (!isN(old) && mtm !== old) flash(mEl.parentElement, mtm - old); mEl.dataset.v = mtm; }
+  $("stReal").textContent = fN(real);
+  const unEl = $("stUn"); unEl.textContent = fS(un) + " U"; unEl.className = "num " + cls(un);
+  const open = names().filter(n => roster()[n].open_position);
+  $("stPos").textContent = open.length + " 个";
+  $("stPosNames").textContent = open.length ? open.map(n => NAME[n]).join("、") : "全部空仓";
+  const lead = names().slice().sort((a,b) => liveMtm(b) - liveMtm(a))[0];
+  $("stLeader").textContent = NAME[lead];
+  $("stLeaderSub").textContent = "盯市 " + fN(liveMtm(lead)) + " U · " + roster()[lead].trades + " 笔 · 胜率 " + (isN(roster()[lead].win_rate_pct) ? "—" : fN(roster()[lead].win_rate_pct, 0) + "%");
+  // 实时页
+  $("lvMtm").textContent = fN(mtm) + " U";
+  if (isN(S.openFirstMtm)) S.openFirstMtm = mtm;
+  const chg = mtm - S.openFirstMtm, cEl = $("lvChg");
+  cEl.textContent = fS(chg) + " U"; cEl.className = "num " + cls(chg);
+  const lu = $("lvUn"); lu.textContent = fS(un) + " U"; lu.className = "num " + cls(un);
+  $("lvReal").textContent = fN(real) + " U";
+  // 表格中的实时列
+  names().forEach(n => {
+    const u = liveUnreal(n);
+    [["rk-mtm-", fN(liveMtm(n)), ""], ["pm-mtm-", fN(liveMtm(n)), ""]].forEach(([pre, txt]) => {
+      const e = $(pre + n); if (e) e.textContent = txt;
+    });
+    [["rk-un-"], ["pm-un-"], ["lc-un-"]].forEach(([pre]) => {
+      const e = $(pre + n);
+      if (e){
+        const v = roster()[n];
+        e.textContent = pre === "lc-un-" && isN(u) ? "已实现 " + fN(v.equity) : (isN(u) ? "—" : (pre === "lc-un-" ? "浮盈 " : "") + fS(u));
+        e.className = "num " + cls(u);
+      }
+    });
+    const lm = $("lc-mtm-" + n); if (lm) lm.textContent = fN(liveMtm(n));
+    const ou = $("ovp-un-" + n); if (ou){ ou.textContent = isN(u) ? "—" : fS(u) + " U"; ou.className = "num " + cls(u); }
+  });
+  updatePosDetail();
+  drawCharts();
+}
+function appendLivePoint(){
+  const eq = {}, un = {};
+  names().forEach(n => { eq[n] = liveMtm(n); un[n] = liveUnreal(n); });
+  const pt = {t: new Date(), eq, un, tot: totMtm()};
+  // 实时流水：浮盈单步变动 > 0.5U
+  const prev = S.livePts[S.livePts.length - 1];
+  if (prev){
+    names().forEach(n => {
+      const a = prev.un[n], b = un[n];
+      if (!isN(a) && !isN(b) && Math.abs(b - a) > 0.5)
+        pushFeed(pt.t, "live", `<b>${esc(NAME[n])}</b> 浮${b >= a ? "盈扩大" : "盈回落"} <span class="num">${fS(a)} → ${fS(b)} U</span>`, true);
+    });
+  }
+  S.livePts.push(pt);
+  if (S.livePts.length > 3000) S.livePts.splice(0, S.livePts.length - 3000);
+}
+async function fetchPx(sym){
+  const r = await fetch(`https://api.bitget.com/api/v2/mix/market/ticker?symbol=${sym}&productType=USDT-FUTURES`, {cache:"no-store"});
+  const j = await r.json();
+  if (j.code !== "00000") throw new Error(j.msg || j.code);
+  return parseFloat(j.data[0].lastPr);
+}
+async function tick(first){
+  const res = await Promise.allSettled(SYMS.map(fetchPx));
+  let ok = false;
+  res.forEach((r, i) => { if (r.status === "fulfilled" && r.value > 0){ S.prices[SYMS[i]] = r.value; ok = true; } });
+  if (ok){ S.lastTick = new Date(); S.tickOk = true; appendLivePoint(); }
+  paintLive(first);
+}
+function nextRound(){
+  const now = new Date(), anchors = [5, 20, 35, 50];
+  for (const m of anchors){
+    const t = new Date(now); t.setMinutes(m, 0, 0);
+    if (t > now) return t;
+  }
+  const t = new Date(now); t.setHours(now.getHours() + 1, 5, 0, 0);
+  return t;
+}
+function everySecond(){
+  const now = new Date();
+  $("clock").textContent = "北京 " + fTS(now);
+  if (S.sum) $("genAt").textContent = fT(S.sum.generated_at);
+  if (S.lastTick){
+    $("tickAt").textContent = fTS(S.lastTick);
+    $("tickAge").textContent = Math.max(0, Math.round((now - S.lastTick) / 1000)) + " 秒前";
+  }
+  const left = nextRound() - now;
+  const mm = String(Math.floor(left / 60000)).padStart(2, "0"), ss = String(Math.floor(left % 60000 / 1000)).padStart(2, "0");
+  const cd = $("cdNext"); if (cd) cd.textContent = mm + ":" + ss;
+  const days = Math.floor((now - START) / 864e5);
+  const sd = $("stDays"); if (sd && S.sum) sd.textContent = "第 " + (days + 1) + " 天 · 9 策略运行中";
+  updatePosDetail();
+}
+
+/* ================= 加载 ================= */
+async function load(){
+  try {
+    const [sum, hist, live, bt, scan] = await Promise.all([
+      fetch("data/paper_summary.json").then(r => r.json()),
+      fetch("data/paper_history.json").then(r => r.json()),
+      fetch("data/live_history.json").then(r => r.json()),
+      fetch("data/backtest_results.json").then(r => r.json()),
+      fetch("data/donchian_scan.json").then(r => r.json())
+    ]);
+    S.sum = sum; S.hist = hist; S.bt = bt; S.scan = scan;
+    // 初始价格用记账价打底，tick 后替换为实时价
+    SYMS.forEach(sym => { S.prices[sym] = sum.prices[sym]; });
+    S.livePts = live.map(p => ({
+      t: parseTs(p.ts), eq: p.eq, un: p.un,
+      tot: Object.values(p.eq).reduce((a, b) => a + (b || 0), 0)
+    }));
+    $("lvGenAt").textContent = fT(sum.generated_at);
+    $("lvBar").textContent = fT(sum.latest_bar);
+    renderRank();
+    $("ovPos").innerHTML = posSummaryHTML();
+    renderPaper();
+    renderGrad();
+    renderBacktest();
+    renderLvCards();
+    buildFeed();
+    // 实时页先按记账口径画一遍，tick 后刷新为实时
+    S.livePts.forEach(p => { /* keep */ });
+    appendLivePoint();
+    paintLive(true);
+    everySecond();
+    tick(true);
+    setInterval(() => tick(false), 5000);
+    setInterval(everySecond, 1000);
+  } catch (e) {
+    const el = $("loadErr");
+    el.style.display = "block";
+    el.textContent = "数据加载失败：" + e.message + "（请稍后刷新页面）";
+  }
+}
+document.querySelectorAll("#tabs button").forEach(b => {
+  b.addEventListener("click", () => {
+    document.querySelectorAll("#tabs button").forEach(x => x.classList.toggle("on", x === b));
+    document.querySelectorAll("section.page").forEach(p => p.classList.toggle("on", p.id === "p-" + b.dataset.p));
+    drawCharts();
+  });
+});
+let rsz;
+window.addEventListener("resize", () => { clearTimeout(rsz); rsz = setTimeout(drawCharts, 150); });
+load();
 </script>
 </body>
 </html>
