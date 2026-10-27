@@ -127,7 +127,7 @@ ul.rules li::before{content:"·";color:var(--acc);margin-right:6px;font-weight:7
     <div class="scard px"><div class="lab">BTCUSDT 永续 · 最新价</div><div class="val num"><span id="px-BTCUSDT">…</span><span class="delta" id="pxd-BTCUSDT"></span></div><div class="lab">较上次记账价 <span id="pxb-BTCUSDT" class="num">…</span></div></div>
     <div class="scard px"><div class="lab">TSLAUSDT 永续 · 最新价</div><div class="val num"><span id="px-TSLAUSDT">…</span><span class="delta" id="pxd-TSLAUSDT"></span></div><div class="lab">较上次记账价 <span id="pxb-TSLAUSDT" class="num">…</span></div></div>
     <div class="scard px"><div class="lab">SPCXUSDT 永续 · 最新价</div><div class="val num"><span id="px-SPCXUSDT">…</span><span class="delta" id="pxd-SPCXUSDT"></span></div><div class="lab">较上次记账价 <span id="pxb-SPCXUSDT" class="num">…</span></div></div>
-    <div class="scard"><div class="lab">组合盯市权益（9 策略合计）</div><div class="val num" id="stMtm">…</div><div class="lab">每策略 400 U 独立账本 · 基准 3,600</div></div>
+    <div class="scard"><div class="lab">组合盯市权益（<span id="stCnt">…</span> 策略合计）</div><div class="val num" id="stMtm">…</div><div class="lab">每策略 400 U 独立账本 · 基准 <span id="stBase">…</span></div></div>
     <div class="scard"><div class="lab">组合已实现权益</div><div class="val num" id="stReal">…</div><div class="lab">总浮盈 <span id="stUn" class="num">…</span></div></div>
     <div class="scard"><div class="lab">当前持仓</div><div class="val num" id="stPos">…</div><div class="lab" id="stPosNames">…</div></div>
     <div class="scard"><div class="lab">当前领先策略（盯市权益）</div><div class="val sm num" id="stLeader">…</div><div class="lab" id="stLeaderSub">…</div></div>
@@ -220,7 +220,7 @@ ul.rules li::before{content:"·";color:var(--acc);margin-right:6px;font-weight:7
         <div class="kv"><span class="k">记账数据</span><span class="num" id="lvGenAt">…</span></div>
         <div class="kv"><span class="k">最新已收盘 K 线</span><span class="num" id="lvBar">…</span></div>
         <div class="kv"><span class="k">模拟盘起始</span><span class="num">2026-10-26</span></div>
-        <div class="kv"><span class="k">运行策略</span><span class="num">9 个 · 均 BTC</span></div>
+        <div class="kv"><span class="k">运行策略</span><span class="num" id="lvRosterN">…</span></div>
         <p class="note" style="margin-top:5px">秒级跳动的只有盯市数字（现价、浮盈、盯市权益）；开仓/平仓由策略按 1H / 4H 收盘 K 线判定，不会因盘中价格跳动多做一笔交易。</p>
       </div>
     </div>
@@ -242,7 +242,7 @@ ul.rules li::before{content:"·";color:var(--acc);margin-right:6px;font-weight:7
 <!-- ================= 模拟盘 ================= -->
 <section class="page" id="p-paper">
   <div class="card">
-    <h3>策略总表 · 9 个策略 × 400 U 独立复利账本 <span class="tag">盯市列每约 5 秒实时重算</span></h3>
+    <h3>策略总表 · <span id="pmCount">…</span> 个策略 × 400 U 独立复利账本 <span class="tag">盯市列每约 5 秒实时重算</span></h3>
     <div class="tw"><table class="tbl" id="pmTable"></table></div>
   </div>
   <div class="card mt6">
@@ -346,15 +346,21 @@ const NAME = {
   donchian20_btc:"唐奇安 20", donchian40_btc:"唐奇安 40", donchian80_btc:"唐奇安 80",
   donchian40_longonly_btc:"唐奇安 40 · 只做多", keylevel_btc_1h:"关键位剧本",
   keylevel_gate_btc_1h:"关键位 · 突破门", ema_cross_1h_btc:"EMA 交叉",
-  rsi2_1h_btc:"RSI(2) 反转", bb_meanrev_1h_btc:"布林带回归"
+  rsi2_1h_btc:"RSI(2) 反转", bb_meanrev_1h_btc:"布林带回归",
+  donchian100_btc:"唐奇安100", keltner_break_btc_4h:"Keltner突破",
+  swing_break_btc_4h:"摆动突破"
 };
 const SUB = {
   donchian20_btc:"通道突破 · 4H · 通道 20", donchian40_btc:"通道突破 · 4H · 通道 40",
   donchian80_btc:"通道突破 · 4H · 通道 80", donchian40_longonly_btc:"通道突破 · 4H · 通道 40 · 只做多",
   keylevel_btc_1h:"关键位 · 1H 收线确认", keylevel_gate_btc_1h:"关键位 + 新鲜突破门 · 1H",
   ema_cross_1h_btc:"EMA12/26 + 200 均线过滤 · 1H", rsi2_1h_btc:"RSI(2) 极值反转 · 1H",
-  bb_meanrev_1h_btc:"布林带 + RSI 均值回归 · 1H"
+  bb_meanrev_1h_btc:"布林带 + RSI 均值回归 · 1H",
+  donchian100_btc:"4H 通道100 · 慢速趋势", keltner_break_btc_4h:"4H EMA20±2.0ATR 通道突破",
+  swing_break_btc_4h:"4H 摆动高低点突破 w2"
 };
+const nm = n => NAME[n] || n;
+const sb = n => (SUB[n] !== undefined ? SUB[n] : "");
 const BTNAME = {donchian:"唐奇安突破", rsi2:"RSI(2) 改良", bb_rsi:"布林带 + RSI"};
 const $ = id => document.getElementById(id);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
@@ -495,7 +501,7 @@ function buildFeed(){
   // 记账：近 24h 平仓（带盈亏明细）
   names().forEach(n => (roster()[n].closed_last_24h || []).forEach(c => {
     items.push({t: parseTs(c.exit_dt), kind:"acct",
-      html:`<b>${esc(NAME[n])}</b> 平仓 ${c.dir > 0 ? "多" : "空"}单 · 盈亏 <b class="${cls(c.pnl)} num">${fS(c.pnl)} U</b> · 平后权益 ${fN(c.eq_after)}`});
+      html:`<b>${esc(nm(n))}</b> 平仓 ${c.dir > 0 ? "多" : "空"}单 · 盈亏 <b class="${cls(c.pnl)} num">${fS(c.pnl)} U</b> · 平后权益 ${fN(c.eq_after)}`});
   }));
   // 记账：历史记账点之间的开仓 / 笔数变化
   for (let i = 1; i < S.hist.length; i++){
@@ -503,9 +509,9 @@ function buildFeed(){
     names().forEach(n => {
       const x = a[n], y = b[n]; if (!x || !y) return;
       if ((y.trades || 0) > (x.trades || 0) && !(roster()[n].closed_last_24h || []).length)
-        items.push({t, kind:"acct", html:`<b>${esc(NAME[n])}</b> 记账确认平仓 ${(y.trades||0)-(x.trades||0)} 笔`});
+        items.push({t, kind:"acct", html:`<b>${esc(nm(n))}</b> 记账确认平仓 ${(y.trades||0)-(x.trades||0)} 笔`});
       if (!x.open_dir && y.open_dir)
-        items.push({t, kind:"acct", html:`<b>${esc(NAME[n])}</b> 记账确认开仓 · ${y.open_dir > 0 ? "做多" : "做空"}`});
+        items.push({t, kind:"acct", html:`<b>${esc(nm(n))}</b> 记账确认开仓 · ${y.open_dir > 0 ? "做多" : "做空"}`});
     });
   }
   // 实时盯市：相邻盯市点浮盈单步变动 > 0.5U
@@ -515,7 +521,7 @@ function buildFeed(){
       const a = pts[i-1].un[n], b = pts[i].un[n];
       if (!isN(a) && !isN(b) && Math.abs(b - a) > 0.5)
         items.push({t: pts[i].t, kind:"live",
-          html:`<b>${esc(NAME[n])}</b> 浮${b >= a ? "盈扩大" : "盈回落"} <span class="num">${fS(a)} → ${fS(b)} U</span>`});
+          html:`<b>${esc(nm(n))}</b> 浮${b >= a ? "盈扩大" : "盈回落"} <span class="num">${fS(a)} → ${fS(b)} U</span>`});
     });
   }
   S.feed = items.sort((x,y) => y.t - x.t).slice(0, 40);
@@ -528,7 +534,7 @@ function renderRank(){
   $("ovRank").innerHTML =
     `<tr><th class="l">策略</th><th>笔数</th><th>胜率</th><th>已实现</th><th>盯市权益</th><th>浮盈</th></tr>` +
     rows.map(n => { const v = roster()[n], u = liveUnreal(n); return `<tr>
-      <td class="l"><b>${esc(NAME[n])}</b> ${v.open_position ? `<span class="tag ${v.open_position.dir > 0 ? "up" : "dn"}">${v.open_position.dir > 0 ? "多" : "空"}</span>` : ""}</td>
+      <td class="l"><b>${esc(nm(n))}</b> ${v.open_position ? `<span class="tag ${v.open_position.dir > 0 ? "up" : "dn"}">${v.open_position.dir > 0 ? "多" : "空"}</span>` : ""}</td>
       <td class="num">${v.trades}</td>
       <td class="num">${isN(v.win_rate_pct) ? "—" : fN(v.win_rate_pct, 0) + "%"}</td>
       <td class="num">${fN(v.equity)}</td>
@@ -540,7 +546,7 @@ function posSummaryHTML(){
   if (!open.length) return `<span class="sub">当前全部空仓，无持仓。</span>`;
   return open.map(n => {
     const op = roster()[n].open_position, u = liveUnreal(n), px = S.prices.BTCUSDT;
-    return `<div class="kv"><span class="k"><b style="color:var(--txt)">${esc(NAME[n])}</b> <span class="tag ${op.dir > 0 ? "up" : "dn"}">${op.dir > 0 ? "做多" : "做空"}</span> 进场 <span class="num">${fN(op.entry, 1)}</span> · 现价 <span class="num" id="ovp-px-${n}">${isN(px) ? "…" : fN(px, 1)}</span></span><b class="num ${cls(u)}" id="ovp-un-${n}">${isN(u) ? "—" : fS(u) + " U"}</b></div>`;
+    return `<div class="kv"><span class="k"><b style="color:var(--txt)">${esc(nm(n))}</b> <span class="tag ${op.dir > 0 ? "up" : "dn"}">${op.dir > 0 ? "做多" : "做空"}</span> 进场 <span class="num">${fN(op.entry, 1)}</span> · 现价 <span class="num" id="ovp-px-${n}">${isN(px) ? "…" : fN(px, 1)}</span></span><b class="num ${cls(u)}" id="ovp-un-${n}">${isN(u) ? "—" : fS(u) + " U"}</b></div>`;
   }).join("");
 }
 function renderPaper(){
@@ -548,8 +554,8 @@ function renderPaper(){
   $("pmTable").innerHTML =
     `<tr><th class="l">策略</th><th class="l">规则</th><th class="l">状态</th><th>笔数</th><th>胜率</th><th>期望/笔</th><th>最大回撤</th><th>已实现权益</th><th>盯市权益</th><th>浮盈</th></tr>` +
     rows.map(n => { const v = roster()[n], u = liveUnreal(n), op = v.open_position; return `<tr>
-      <td class="l"><b>${esc(NAME[n])}</b></td>
-      <td class="l sub">${esc(SUB[n])}</td>
+      <td class="l"><b>${esc(nm(n))}</b></td>
+      <td class="l sub">${esc(sb(n))}</td>
       <td class="l">${op ? `<span class="tag ${op.dir > 0 ? "up" : "dn"}">${op.dir > 0 ? "做多" : "做空"} @ ${fN(op.entry, 0)}</span>` : `<span class="tag">空仓</span>`}</td>
       <td class="num">${v.trades}</td>
       <td class="num">${isN(v.win_rate_pct) ? "—" : fN(v.win_rate_pct, 0) + "%"}</td>
@@ -564,7 +570,7 @@ function renderPaper(){
   closed.sort((a,b) => parseTs(b.exit_dt) - parseTs(a.exit_dt));
   $("pmClosed").innerHTML =
     `<tr><th class="l">策略</th><th class="l">方向</th><th class="l">进场（北京）</th><th class="l">出场（北京）</th><th>盈亏 U</th><th>平后权益</th></tr>` +
-    (closed.map(c => `<tr><td class="l"><b>${esc(NAME[c.n])}</b></td>
+    (closed.map(c => `<tr><td class="l"><b>${esc(nm(c.n))}</b></td>
       <td class="l"><span class="tag ${c.dir > 0 ? "up" : "dn"}">${c.dir > 0 ? "做多" : "做空"}</span></td>
       <td class="l num">${fT(c.entry_dt)}</td><td class="l num">${fT(c.exit_dt)}</td>
       <td class="num ${cls(c.pnl)}"><b>${fS(c.pnl)}</b></td><td class="num">${fN(c.eq_after)}</td></tr>`).join("")
@@ -577,7 +583,7 @@ function renderPosDetail(){
     const op = roster()[n].open_position;
     return `<div style="padding:7px 0;border-bottom:1px solid var(--line)">
       <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:baseline">
-        <b>${esc(NAME[n])}</b><span class="sub" style="font-size:11px">${esc(SUB[n])}</span>
+        <b>${esc(nm(n))}</b><span class="sub" style="font-size:11px">${esc(sb(n))}</span>
         <span class="tag ${op.dir > 0 ? "up" : "dn"}">${op.dir > 0 ? "做多" : "做空"}</span>
         <span class="sub">进场 <span class="num">${fT(op.entry_dt)}</span> · 已持仓 <b class="num" id="pd-dur-${n}" style="color:var(--txt)">…</b></span>
         <span style="margin-left:auto" class="num">浮盈 <b class="${cls(liveUnreal(n))}" id="pd-un-${n}">${isN(liveUnreal(n)) ? "—" : fS(liveUnreal(n)) + " U"}</b> <span class="sub" id="pd-unp-${n}"></span></span>
@@ -646,8 +652,8 @@ function renderGrad(){
     const row = (lab, val, pct, barCls, extra="") =>
       `<div style="margin-top:7px"><div style="display:flex;justify-content:space-between;font-size:11.5px"><span class="sub">${lab}</span><span class="num">${val} ${extra}</span></div><div class="bar" style="margin-top:3px"><i class="${barCls}" style="width:${pct}%"></i></div></div>`;
     return `<div class="card">
-      <h3>${esc(NAME[n])} ${done ? `<span class="tag up">已达毕业标准</span>` : `<span class="tag warn">还差 ${miss.join("、")}</span>`}</h3>
-      <div class="sub" style="font-size:11px">${esc(SUB[n])} · 已实现 <b class="num" style="color:var(--txt)">${fN(v.equity)}</b> U</div>
+      <h3>${esc(nm(n))} ${done ? `<span class="tag up">已达毕业标准</span>` : `<span class="tag warn">还差 ${miss.join("、")}</span>`}</h3>
+      <div class="sub" style="font-size:11px">${esc(sb(n))} · 已实现 <b class="num" style="color:var(--txt)">${fN(v.equity)}</b> U</div>
       ${row("交易笔数 / 30 笔", v.trades + " 笔", tPct, v.trades >= 30 ? "up" : "")}
       ${row("运行时间 / 8 周", weeks.toFixed(1) + " 周", wPct, weeks >= 8 ? "up" : "")}
       ${row("每笔期望（须 &gt; 0）", isN(v.expectancy) ? "暂无成交样本" : fS(v.expectancy) + " U", isN(v.expectancy) ? 0 : (expOk ? 100 : 30), expOk ? "up" : "dn",
@@ -723,25 +729,25 @@ function renderLvCards(){
   $("lvCards").innerHTML = names().map(n => {
     const v = roster()[n], op = v.open_position, u = liveUnreal(n);
     return `<div class="card">
-      <h3 style="margin-bottom:3px">${esc(NAME[n])} ${op ? `<span class="tag ${op.dir > 0 ? "up" : "dn"}">${op.dir > 0 ? "多" : "空"} @ ${fN(op.entry, 0)}</span>` : `<span class="tag">空仓</span>`}</h3>
+      <h3 style="margin-bottom:3px">${esc(nm(n))} ${op ? `<span class="tag ${op.dir > 0 ? "up" : "dn"}">${op.dir > 0 ? "多" : "空"} @ ${fN(op.entry, 0)}</span>` : `<span class="tag">空仓</span>`}</h3>
       <div style="display:flex;justify-content:space-between;align-items:baseline">
         <b class="num" style="font-size:16px" id="lc-mtm-${n}">${fN(liveMtm(n))}</b>
         <span class="num ${cls(u)}" id="lc-un-${n}" style="font-size:12px">${isN(u) ? "已实现 " + fN(v.equity) : "浮盈 " + fS(u)}</span>
       </div>
       <canvas class="chart spark" id="lc-cv-${n}" height="52" style="margin-top:4px"></canvas>
-      <div class="sub" style="font-size:10.5px;margin-top:2px">${esc(SUB[n])}</div>
+      <div class="sub" style="font-size:10.5px;margin-top:2px">${esc(sb(n))}</div>
     </div>`;
   }).join("");
 }
 function drawCharts(){
   const tot = S.livePts.map(p => p.tot), times = S.livePts.map(p => p.t);
-  drawLine($("lvChart"), tot, {color:"#35c4ff", fill:"rgba(53,196,255,.07)", base:3600, times});
-  drawLine($("ovLiveChart"), tot, {color:"#35c4ff", fill:"rgba(53,196,255,.07)", base:3600, times});
+  drawLine($("lvChart"), tot, {color:"#35c4ff", fill:"rgba(53,196,255,.07)", base:names().length * 400, times});
+  drawLine($("ovLiveChart"), tot, {color:"#35c4ff", fill:"rgba(53,196,255,.07)", base:names().length * 400, times});
   names().forEach(n => drawLine($("lc-cv-" + n), S.livePts.map(p => p.eq[n]), {color:"#f0b90b", base:400, mini:true}));
   const real = S.hist.map(p => names().reduce((a,n) => a + ((p.strategies[n] || {}).equity || 0), 0));
   const rtimes = S.hist.map(p => parseTs(p.ts));
-  drawLine($("lvRealChart"), real, {color:"#16c784", step:true, base:3600, times:rtimes});
-  drawLine($("ovRealChart"), real, {color:"#16c784", step:true, base:3600, times:rtimes});
+  drawLine($("lvRealChart"), real, {color:"#16c784", step:true, base:names().length * 400, times:rtimes});
+  drawLine($("ovRealChart"), real, {color:"#16c784", step:true, base:names().length * 400, times:rtimes});
   $("lvPts").textContent = S.livePts.length + " 点";
 }
 function paintLive(first){
@@ -766,12 +772,17 @@ function paintLive(first){
   const mEl = $("stMtm");
   if (mEl){ const old = Number(mEl.dataset.v); mEl.textContent = fN(mtm); if (!isN(old) && mtm !== old) flash(mEl.parentElement, mtm - old); mEl.dataset.v = mtm; }
   $("stReal").textContent = fN(real);
+  const cnt = names().length;
+  const eCnt = $("stCnt"); if (eCnt) eCnt.textContent = cnt;
+  const eBase = $("stBase"); if (eBase) eBase.textContent = fN(cnt * 400, 0);
+  const eRos = $("lvRosterN"); if (eRos) eRos.textContent = cnt + " 个 · 均 BTC";
+  const ePm = $("pmCount"); if (ePm) ePm.textContent = cnt;
   const unEl = $("stUn"); unEl.textContent = fS(un) + " U"; unEl.className = "num " + cls(un);
   const open = names().filter(n => roster()[n].open_position);
   $("stPos").textContent = open.length + " 个";
-  $("stPosNames").textContent = open.length ? open.map(n => NAME[n]).join("、") : "全部空仓";
+  $("stPosNames").textContent = open.length ? open.map(n => nm(n)).join("、") : "全部空仓";
   const lead = names().slice().sort((a,b) => liveMtm(b) - liveMtm(a))[0];
-  $("stLeader").textContent = NAME[lead];
+  $("stLeader").textContent = nm(lead);
   $("stLeaderSub").textContent = "盯市 " + fN(liveMtm(lead)) + " U · " + roster()[lead].trades + " 笔 · 胜率 " + (isN(roster()[lead].win_rate_pct) ? "—" : fN(roster()[lead].win_rate_pct, 0) + "%");
   // 实时页
   $("lvMtm").textContent = fN(mtm) + " U";
@@ -810,7 +821,7 @@ function appendLivePoint(){
     names().forEach(n => {
       const a = prev.un[n], b = un[n];
       if (!isN(a) && !isN(b) && Math.abs(b - a) > 0.5)
-        pushFeed(pt.t, "live", `<b>${esc(NAME[n])}</b> 浮${b >= a ? "盈扩大" : "盈回落"} <span class="num">${fS(a)} → ${fS(b)} U</span>`, true);
+        pushFeed(pt.t, "live", `<b>${esc(nm(n))}</b> 浮${b >= a ? "盈扩大" : "盈回落"} <span class="num">${fS(a)} → ${fS(b)} U</span>`, true);
     });
   }
   S.livePts.push(pt);
@@ -850,7 +861,7 @@ function everySecond(){
   const mm = String(Math.floor(left / 60000)).padStart(2, "0"), ss = String(Math.floor(left % 60000 / 1000)).padStart(2, "0");
   const cd = $("cdNext"); if (cd) cd.textContent = mm + ":" + ss;
   const days = Math.floor((now - START) / 864e5);
-  const sd = $("stDays"); if (sd && S.sum) sd.textContent = "第 " + (days + 1) + " 天 · 9 策略运行中";
+  const sd = $("stDays"); if (sd && S.sum) sd.textContent = "第 " + (days + 1) + " 天 · " + names().length + " 策略运行中";
   updatePosDetail();
 }
 

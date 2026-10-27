@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-10-27 03:05:39.061579+00:00",
+ "generated_at": "2026-10-27 03:20:35.129301+00:00",
  "latest_bar": "2026-10-26 20:00:00+00:00",
  "paper_start": "2026-10-26 00:00:00+00:00",
  "prices": {
@@ -175,6 +175,42 @@
      "eq_after": 401.65
     }
    ]
+  },
+  "donchian100_btc": {
+   "strategy": "donchian100_btc",
+   "trades": 0,
+   "win_rate_pct": null,
+   "expectancy": null,
+   "equity": 400.0,
+   "max_dd_pct": 0.0,
+   "unrealized_pnl": null,
+   "equity_mtm": 400.0,
+   "open_position": null,
+   "closed_last_24h": []
+  },
+  "keltner_break_btc_4h": {
+   "strategy": "keltner_break_btc_4h",
+   "trades": 0,
+   "win_rate_pct": null,
+   "expectancy": null,
+   "equity": 400.0,
+   "max_dd_pct": 0.0,
+   "unrealized_pnl": null,
+   "equity_mtm": 400.0,
+   "open_position": null,
+   "closed_last_24h": []
+  },
+  "swing_break_btc_4h": {
+   "strategy": "swing_break_btc_4h",
+   "trades": 0,
+   "win_rate_pct": null,
+   "expectancy": null,
+   "equity": 400.0,
+   "max_dd_pct": 0.0,
+   "unrealized_pnl": null,
+   "equity_mtm": 400.0,
+   "open_position": null,
+   "closed_last_24h": []
   }
  }
 }
