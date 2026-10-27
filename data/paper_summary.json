@@ -1,0 +1,180 @@
+{
+ "generated_at": "2026-10-27 02:50:36.955453+00:00",
+ "latest_bar": "2026-10-26 20:00:00+00:00",
+ "paper_start": "2026-10-26 00:00:00+00:00",
+ "prices": {
+  "BTCUSDT": 80036.0,
+  "TSLAUSDT": 394.61,
+  "SPCXUSDT": 147.92
+ },
+ "roster": {
+  "donchian40_btc": {
+   "strategy": "donchian40_btc",
+   "trades": 0,
+   "win_rate_pct": null,
+   "expectancy": null,
+   "equity": 400.0,
+   "max_dd_pct": 0.0,
+   "unrealized_pnl": null,
+   "equity_mtm": 400.0,
+   "open_position": null,
+   "closed_last_24h": []
+  },
+  "donchian80_btc": {
+   "strategy": "donchian80_btc",
+   "trades": 0,
+   "win_rate_pct": null,
+   "expectancy": null,
+   "equity": 400.0,
+   "max_dd_pct": 0.0,
+   "unrealized_pnl": null,
+   "equity_mtm": 400.0,
+   "open_position": null,
+   "closed_last_24h": []
+  },
+  "donchian40_longonly_btc": {
+   "strategy": "donchian40_longonly_btc",
+   "trades": 0,
+   "win_rate_pct": null,
+   "expectancy": null,
+   "equity": 400.0,
+   "max_dd_pct": 0.0,
+   "unrealized_pnl": null,
+   "equity_mtm": 400.0,
+   "open_position": null,
+   "closed_last_24h": []
+  },
+  "donchian20_btc": {
+   "strategy": "donchian20_btc",
+   "trades": 0,
+   "win_rate_pct": null,
+   "expectancy": null,
+   "equity": 400.0,
+   "max_dd_pct": 0.0,
+   "unrealized_pnl": null,
+   "equity_mtm": 400.0,
+   "open_position": null,
+   "closed_last_24h": []
+  },
+  "keylevel_btc_1h": {
+   "strategy": "keylevel_btc_1h",
+   "trades": 1,
+   "win_rate_pct": 0.0,
+   "expectancy": -2.29,
+   "equity": 397.71,
+   "max_dd_pct": -0.6,
+   "unrealized_pnl": -0.31,
+   "equity_mtm": 397.4,
+   "open_position": {
+    "dir": -1,
+    "entry": 79931.0,
+    "entry_dt": "2026-10-26 19:00:00+00:00",
+    "stop": 80600,
+    "tp": 78000,
+    "qty": 0.0029724530060567162
+   },
+   "closed_last_24h": [
+    {
+     "dir": -1,
+     "entry_dt": "2026-10-26 02:00:00+00:00",
+     "exit_dt": "2026-10-26 15:00:00+00:00",
+     "pnl": -2.29,
+     "eq_after": 397.71
+    }
+   ]
+  },
+  "keylevel_gate_btc_1h": {
+   "strategy": "keylevel_gate_btc_1h",
+   "trades": 1,
+   "win_rate_pct": 0.0,
+   "expectancy": -2.29,
+   "equity": 397.71,
+   "max_dd_pct": -0.6,
+   "unrealized_pnl": -0.31,
+   "equity_mtm": 397.4,
+   "open_position": {
+    "dir": -1,
+    "entry": 79931.0,
+    "entry_dt": "2026-10-26 19:00:00+00:00",
+    "stop": 80600,
+    "tp": 78000,
+    "qty": 0.0029724530060567162
+   },
+   "closed_last_24h": [
+    {
+     "dir": -1,
+     "entry_dt": "2026-10-26 02:00:00+00:00",
+     "exit_dt": "2026-10-26 15:00:00+00:00",
+     "pnl": -2.29,
+     "eq_after": 397.71
+    }
+   ]
+  },
+  "ema_cross_1h_btc": {
+   "strategy": "ema_cross_1h_btc",
+   "trades": 0,
+   "win_rate_pct": null,
+   "expectancy": null,
+   "equity": 400.0,
+   "max_dd_pct": 0.0,
+   "unrealized_pnl": null,
+   "equity_mtm": 400.0,
+   "open_position": null,
+   "closed_last_24h": []
+  },
+  "rsi2_1h_btc": {
+   "strategy": "rsi2_1h_btc",
+   "trades": 3,
+   "win_rate_pct": 100.0,
+   "expectancy": 0.69,
+   "equity": 402.07,
+   "max_dd_pct": 0.0,
+   "unrealized_pnl": null,
+   "equity_mtm": 402.07,
+   "open_position": null,
+   "closed_last_24h": [
+    {
+     "dir": 1,
+     "entry_dt": "2026-10-26 02:00:00+00:00",
+     "exit_dt": "2026-10-26 05:00:00+00:00",
+     "pnl": 0.62,
+     "eq_after": 400.62
+    },
+    {
+     "dir": -1,
+     "entry_dt": "2026-10-26 10:00:00+00:00",
+     "exit_dt": "2026-10-26 13:00:00+00:00",
+     "pnl": 0.11,
+     "eq_after": 400.73
+    },
+    {
+     "dir": 1,
+     "entry_dt": "2026-10-26 14:00:00+00:00",
+     "exit_dt": "2026-10-26 15:00:00+00:00",
+     "pnl": 1.34,
+     "eq_after": 402.07
+    }
+   ]
+  },
+  "bb_meanrev_1h_btc": {
+   "strategy": "bb_meanrev_1h_btc",
+   "trades": 1,
+   "win_rate_pct": 100.0,
+   "expectancy": 1.65,
+   "equity": 401.65,
+   "max_dd_pct": 0.0,
+   "unrealized_pnl": null,
+   "equity_mtm": 401.65,
+   "open_position": null,
+   "closed_last_24h": [
+    {
+     "dir": 1,
+     "entry_dt": "2026-10-26 02:00:00+00:00",
+     "exit_dt": "2026-10-26 10:00:00+00:00",
+     "pnl": 1.65,
+     "eq_after": 401.65
+    }
+   ]
+  }
+ }
+}
