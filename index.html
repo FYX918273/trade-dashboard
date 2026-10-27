@@ -32,7 +32,7 @@ h1{font-size:16px;font-weight:700;letter-spacing:.5px}
 .scard .delta{font-size:11px;margin-left:6px;font-weight:600}
 .scard.px .val{font-size:17px}
 /* ---------- tabs ---------- */
-nav.tabs{display:flex;gap:2px;margin:10px 0 8px;border-bottom:1px solid var(--line);overflow-x:auto;scrollbar-width:none}
+nav.tabs{display:flex;gap:2px;margin:8px 0 0;border-bottom:1px solid var(--line);overflow-x:auto;scrollbar-width:none}
 nav.tabs::-webkit-scrollbar{display:none}
 nav.tabs button{background:none;border:none;color:var(--sub);font-size:13.5px;font-weight:600;padding:7px 13px;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;font-family:inherit}
 nav.tabs button:hover{color:var(--txt)}
@@ -50,7 +50,7 @@ section.page.on{display:block}
 .mt6{margin-top:6px}
 /* ---------- tables ---------- */
 .tw{overflow-x:auto;max-width:100%}
-table.tbl{width:100%;border-collapse:collapse;font-size:12px;white-space:nowrap}
+table.tbl{width:100%;border-collapse:collapse;font-size:12px;white-space:nowrap;font-variant-numeric:tabular-nums}
 table.tbl th{color:var(--sub);font-weight:600;text-align:right;padding:4px 6px;border-bottom:1px solid var(--line2);font-size:11.5px}
 table.tbl th:first-child,table.tbl td:first-child{text-align:left}
 table.tbl td{padding:4px 6px;border-bottom:1px solid var(--line);text-align:right}
@@ -71,10 +71,21 @@ table.tbl td.l,table.tbl th.l{text-align:left}
 .feed .ft{color:var(--dim);font-variant-numeric:tabular-nums;white-space:nowrap}
 .feed .fx{flex:1;min-width:0}
 canvas.chart{width:100%;display:block}
+#lvChart{height:236px}
+#lvRealChart{height:120px}
+#ovLiveChart,#ovRealChart{height:120px}
+canvas.spark{height:52px}
+.scrolly{max-height:340px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--line2) transparent}
+.scrolly::-webkit-scrollbar{width:6px;height:6px}
+.scrolly::-webkit-scrollbar-thumb{background:var(--line2);border-radius:3px}
+.scrolly.tall{max-height:430px}
+.scrolly table.tbl th{position:sticky;top:0;background:var(--panel);z-index:1}
+#lvFeed{max-height:330px}
 .flash-up{animation:fup .8s} .flash-dn{animation:fdn .8s}
 @keyframes fup{0%{background:var(--upbg)}100%{background:transparent}}
 @keyframes fdn{0%{background:var(--dnbg)}100%{background:transparent}}
 .kv{display:flex;justify-content:space-between;gap:8px;padding:3px 0;border-bottom:1px dashed var(--line);font-size:12px}
+.kv b{font-size:13.5px}
 .kv:last-child{border-bottom:none}
 .kv .k{color:var(--sub)}
 .posbar{position:relative;height:8px;background:var(--panel2);border-radius:4px;margin:6px 0 2px}
@@ -89,6 +100,13 @@ ul.rules li::before{content:"·";color:var(--acc);margin-right:6px;font-weight:7
   .strip{grid-template-columns:repeat(auto-fit,minmax(106px,1fr))}
   .scard .val{font-size:14px}.scard.px .val{font-size:15px}
   .g2,.g3,.g9{grid-template-columns:1fr}
+  #lvMain{grid-template-columns:1fr !important}
+  #lvChart{height:180px}
+  #lvRealChart{height:110px}
+  #ovLiveChart,#ovRealChart{height:110px}
+  canvas.spark{height:48px}
+  #lvFeed{max-height:280px}
+  nav.tabs button{min-height:42px;padding:10px 14px;display:flex;align-items:center}
   h1{font-size:15px}
 }
 </style>
@@ -115,16 +133,16 @@ ul.rules li::before{content:"·";color:var(--acc);margin-right:6px;font-weight:7
     <div class="scard"><div class="lab">当前领先策略（盯市权益）</div><div class="val sm num" id="stLeader">…</div><div class="lab" id="stLeaderSub">…</div></div>
     <div class="scard"><div class="lab">模拟盘运行</div><div class="val sm num" id="stDays">…</div><div class="lab">自 2026-10-26 起 · 前向记账</div></div>
   </div>
+  <nav class="tabs" id="tabs">
+    <button data-p="overview" class="on">总览</button>
+    <button data-p="live">实时</button>
+    <button data-p="paper">模拟盘</button>
+    <button data-p="grad">毕业进度</button>
+    <button data-p="backtest">回测</button>
+    <button data-p="system">系统</button>
+  </nav>
 </header>
 
-<nav class="tabs" id="tabs">
-  <button data-p="overview" class="on">总览</button>
-  <button data-p="live">实时</button>
-  <button data-p="paper">模拟盘</button>
-  <button data-p="grad">毕业进度</button>
-  <button data-p="backtest">回测</button>
-  <button data-p="system">系统</button>
-</nav>
 <div class="err" id="loadErr"></div>
 
 <!-- ================= 总览 ================= -->
@@ -185,7 +203,7 @@ ul.rules li::before{content:"·";color:var(--acc);margin-right:6px;font-weight:7
   <div style="display:grid;grid-template-columns:minmax(0,1fr) 240px;gap:6px" id="lvMain">
     <div class="card">
       <h3>组合盯市权益 · 秒级 <span class="tag up">LIVE</span> <span class="tag" id="lvPts">… 点</span></h3>
-      <canvas class="chart" id="lvChart" height="230"></canvas>
+      <canvas class="chart" id="lvChart" height="236"></canvas>
       <div class="kv"><span class="k">组合盯市权益</span><b class="num" id="lvMtm">…</b></div>
       <div class="kv"><span class="k">页面打开以来变化</span><b class="num" id="lvChg">…</b></div>
       <div class="kv"><span class="k">持仓浮盈合计</span><b class="num" id="lvUn">…</b></div>
@@ -194,7 +212,7 @@ ul.rules li::before{content:"·";color:var(--acc);margin-right:6px;font-weight:7
     <div style="display:flex;flex-direction:column;gap:6px;min-width:0">
       <div class="card" style="text-align:center">
         <div class="sub" style="font-size:11px">下一轮记账判定（开平仓按收盘 K 线）</div>
-        <div class="num" id="cdNext" style="font-size:30px;font-weight:700;margin:4px 0">--:--</div>
+        <div class="num" id="cdNext" style="font-size:26px;font-weight:700;margin:4px 0">--:--</div>
         <div class="note">记账每 15 分钟一轮 · 锚点约 :05 / :20 / :35 / :50</div>
       </div>
       <div class="card">
@@ -211,11 +229,11 @@ ul.rules li::before{content:"·";color:var(--acc);margin-right:6px;font-weight:7
   <div class="grid g2 mt6">
     <div class="card">
       <h3>动态流水 <span class="tag acc">记账</span><span class="tag up">实时盯市</span></h3>
-      <ul class="feed" id="lvFeed"></ul>
+      <ul class="feed scrolly" id="lvFeed"></ul>
     </div>
     <div class="card">
       <h3>已实现权益（每 15 分钟记账）· 阶梯图</h3>
-      <canvas class="chart" id="lvRealChart" height="150"></canvas>
+      <canvas class="chart" id="lvRealChart" height="120"></canvas>
       <p class="note">与秒级盯市曲线分开：这条只统计已平仓落袋的权益，开平仓事件见左侧流水中标「记账」的条目。</p>
     </div>
   </div>
@@ -233,7 +251,7 @@ ul.rules li::before{content:"·";color:var(--acc);margin-right:6px;font-weight:7
   </div>
   <div class="card mt6">
     <h3>近 24 小时平仓</h3>
-    <div class="tw"><table class="tbl" id="pmClosed"></table></div>
+    <div class="tw scrolly"><table class="tbl" id="pmClosed"></table></div>
   </div>
 </section>
 
@@ -255,7 +273,7 @@ ul.rules li::before{content:"·";color:var(--acc);margin-right:6px;font-weight:7
 <section class="page" id="p-backtest">
   <div class="card">
     <h3>回测矩阵 · 3 标的 × 3 策略 × 样本内/外 <span class="tag">成本：手续费 0.06%/边 + 滑点 0.03%/边 + 资金费</span></h3>
-    <div class="tw"><table class="tbl" id="btTable"></table></div>
+    <div class="tw scrolly tall"><table class="tbl" id="btTable"></table></div>
     <p class="note" style="margin-top:6px">样本内/外按时间 70/30 切分，样本外只做考试、不参与调参。SPCX 永续历史仅约 4.5 个月、样本过少，其各行结论不成立，仅作记录。</p>
   </div>
   <div class="card mt6">
@@ -391,24 +409,43 @@ function setupCanvas(cv){
   ctx.setTransform(dpr,0,0,dpr,0,0);
   return [ctx, w, h];
 }
+function fmtAxis(v){
+  const a = Math.abs(v);
+  if (a >= 10000) return (v / 1000).toFixed(1).replace(/\.0$/, "") + "k";
+  if (a >= 1000) return fN(v, 0);
+  return fN(v, a > 0 && a < 10 ? 2 : 0);
+}
 function drawLine(cv, vals, opt={}){
   if (!cv || !cv.clientWidth) return;
   const [ctx, w, h] = setupCanvas(cv);
   ctx.clearRect(0,0,w,h);
   if (!vals || vals.length < 2){
-    ctx.fillStyle = "#5b6577"; ctx.font = "11px sans-serif";
+    ctx.fillStyle = "#5b6577"; ctx.font = "11px sans-serif"; ctx.textAlign = "left";
     ctx.fillText("数据积累中…", 8, 16); return;
   }
   let mn = Math.min(...vals), mx = Math.max(...vals);
   if (opt.base !== undefined){ mn = Math.min(mn, opt.base); mx = Math.max(mx, opt.base); }
   const pad = (mx - mn) * 0.12 || 1; mn -= pad; mx += pad;
-  const X = i => 4 + i * (w - 8) / (vals.length - 1);
-  const Y = v => 5 + (mx - v) / (mx - mn) * (h - 12);
-  ctx.strokeStyle = "rgba(255,255,255,.06)"; ctx.lineWidth = 1;
-  for (let g = 1; g <= 3; g++){ const y = h*g/4; ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(w,y); ctx.stroke(); }
+  const lo = mn + pad, hi = mx - pad;
+  const mini = !!opt.mini;
+  const hasT = !mini && opt.times && opt.times.length === vals.length;
+  const pL = mini ? 2 : 38, pR = mini ? 2 : 6;
+  const pT = mini ? 3 : 6, pB = mini ? 3 : (hasT ? 15 : 6);
+  const X = i => pL + i * (w - pL - pR) / (vals.length - 1);
+  const Y = v => pT + (mx - v) / (mx - mn) * (h - pT - pB);
+  if (!mini){
+    ctx.font = "9.5px sans-serif";
+    [hi, (hi + lo) / 2, lo].forEach(v => {
+      const y = Y(v);
+      ctx.strokeStyle = "rgba(255,255,255,.05)"; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(pL, y); ctx.lineTo(w - pR, y); ctx.stroke();
+      ctx.fillStyle = "#5b6577"; ctx.textAlign = "left";
+      ctx.fillText(fmtAxis(v), 3, y + 3);
+    });
+  }
   if (opt.base !== undefined && opt.base > mn && opt.base < mx){
     ctx.strokeStyle = "rgba(255,255,255,.16)"; ctx.setLineDash([4,4]);
-    ctx.beginPath(); ctx.moveTo(0, Y(opt.base)); ctx.lineTo(w, Y(opt.base)); ctx.stroke(); ctx.setLineDash([]);
+    ctx.beginPath(); ctx.moveTo(pL, Y(opt.base)); ctx.lineTo(w - pR, Y(opt.base)); ctx.stroke(); ctx.setLineDash([]);
   }
   const color = opt.color || "#35c4ff";
   ctx.beginPath();
@@ -418,16 +455,25 @@ function drawLine(cv, vals, opt={}){
     else if (opt.step) { ctx.lineTo(x, Y(vals[i-1])); ctx.lineTo(x, y); }
     else ctx.lineTo(x, y);
   });
-  ctx.strokeStyle = color; ctx.lineWidth = 1.4; ctx.stroke();
+  ctx.strokeStyle = color; ctx.lineWidth = mini ? 1.1 : 1.4; ctx.stroke();
   if (opt.fill){
-    ctx.lineTo(X(vals.length-1), h); ctx.lineTo(X(0), h); ctx.closePath();
+    ctx.lineTo(X(vals.length-1), h - pB); ctx.lineTo(X(0), h - pB); ctx.closePath();
     ctx.fillStyle = opt.fill; ctx.fill();
   }
   const lv = vals[vals.length-1];
-  ctx.beginPath(); ctx.arc(X(vals.length-1), Y(lv), 2.4, 0, 7); ctx.fillStyle = color; ctx.fill();
-  ctx.fillStyle = "#8a94a6"; ctx.font = "10px sans-serif";
-  ctx.fillText(fN(mx - pad, 0), 5, 11);
-  ctx.fillText(fN(mn + pad, 0), 5, h - 3);
+  ctx.beginPath(); ctx.arc(X(vals.length-1), Y(lv), mini ? 1.8 : 2.4, 0, 7); ctx.fillStyle = color; ctx.fill();
+  if (hasT){
+    ctx.font = "9.5px sans-serif"; ctx.fillStyle = "#5b6577";
+    const nLbl = w < 480 ? 3 : 4;
+    for (let k = 0; k < nLbl; k++){
+      const i = Math.round(k * (vals.length - 1) / (nLbl - 1));
+      const t = opt.times[i];
+      if (!(t instanceof Date) || Number.isNaN(t.getTime())) continue;
+      ctx.textAlign = k === 0 ? "left" : (k === nLbl - 1 ? "right" : "center");
+      ctx.fillText(fTS(t).slice(0, 5), X(i), h - 3);
+    }
+    ctx.textAlign = "left";
+  }
 }
 
 /* ================= 流水 ================= */
@@ -682,19 +728,20 @@ function renderLvCards(){
         <b class="num" style="font-size:16px" id="lc-mtm-${n}">${fN(liveMtm(n))}</b>
         <span class="num ${cls(u)}" id="lc-un-${n}" style="font-size:12px">${isN(u) ? "已实现 " + fN(v.equity) : "浮盈 " + fS(u)}</span>
       </div>
-      <canvas class="chart" id="lc-cv-${n}" height="44" style="margin-top:4px"></canvas>
+      <canvas class="chart spark" id="lc-cv-${n}" height="52" style="margin-top:4px"></canvas>
       <div class="sub" style="font-size:10.5px;margin-top:2px">${esc(SUB[n])}</div>
     </div>`;
   }).join("");
 }
 function drawCharts(){
-  const tot = S.livePts.map(p => p.tot);
-  drawLine($("lvChart"), tot, {color:"#35c4ff", fill:"rgba(53,196,255,.07)", base:3600});
-  drawLine($("ovLiveChart"), tot, {color:"#35c4ff", fill:"rgba(53,196,255,.07)", base:3600});
-  names().forEach(n => drawLine($("lc-cv-" + n), S.livePts.map(p => p.eq[n]), {color:"#f0b90b", base:400}));
+  const tot = S.livePts.map(p => p.tot), times = S.livePts.map(p => p.t);
+  drawLine($("lvChart"), tot, {color:"#35c4ff", fill:"rgba(53,196,255,.07)", base:3600, times});
+  drawLine($("ovLiveChart"), tot, {color:"#35c4ff", fill:"rgba(53,196,255,.07)", base:3600, times});
+  names().forEach(n => drawLine($("lc-cv-" + n), S.livePts.map(p => p.eq[n]), {color:"#f0b90b", base:400, mini:true}));
   const real = S.hist.map(p => names().reduce((a,n) => a + ((p.strategies[n] || {}).equity || 0), 0));
-  drawLine($("lvRealChart"), real, {color:"#16c784", step:true, base:3600});
-  drawLine($("ovRealChart"), real, {color:"#16c784", step:true, base:3600});
+  const rtimes = S.hist.map(p => parseTs(p.ts));
+  drawLine($("lvRealChart"), real, {color:"#16c784", step:true, base:3600, times:rtimes});
+  drawLine($("ovRealChart"), real, {color:"#16c784", step:true, base:3600, times:rtimes});
   $("lvPts").textContent = S.livePts.length + " 点";
 }
 function paintLive(first){
