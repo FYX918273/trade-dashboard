@@ -1,11 +1,11 @@
 {
- "generated_at": "2026-10-27 16:05:30.867536+00:00",
- "latest_bar": "2026-10-27 12:00:00+00:00",
+ "generated_at": "2026-10-27 23:50:36.447639+00:00",
+ "latest_bar": "2026-10-27 16:00:00+00:00",
  "paper_start": "2026-10-26 00:00:00+00:00",
  "prices": {
-  "BTCUSDT": 80523.4,
-  "TSLAUSDT": 407.77,
-  "SPCXUSDT": 150.3
+  "BTCUSDT": 80877.7,
+  "TSLAUSDT": 408.46,
+  "SPCXUSDT": 149.34
  },
  "roster": {
   "donchian40_btc": {
@@ -69,13 +69,6 @@
    "closed_last_24h": [
     {
      "dir": -1,
-     "entry_dt": "2026-10-26 02:00:00+00:00",
-     "exit_dt": "2026-10-26 15:00:00+00:00",
-     "pnl": -11.47,
-     "eq_after": 488.53
-    },
-    {
-     "dir": -1,
      "entry_dt": "2026-10-26 19:00:00+00:00",
      "exit_dt": "2026-10-27 15:00:00+00:00",
      "pnl": -11.82,
@@ -94,13 +87,6 @@
    "equity_mtm": 476.71,
    "open_position": null,
    "closed_last_24h": [
-    {
-     "dir": -1,
-     "entry_dt": "2026-10-26 02:00:00+00:00",
-     "exit_dt": "2026-10-26 15:00:00+00:00",
-     "pnl": -11.47,
-     "eq_after": 488.53
-    },
     {
      "dir": -1,
      "entry_dt": "2026-10-26 19:00:00+00:00",
@@ -124,41 +110,28 @@
   },
   "rsi2_1h_btc": {
    "strategy": "rsi2_1h_btc",
-   "trades": 4,
-   "win_rate_pct": 100.0,
-   "expectancy": 2.81,
-   "equity": 511.24,
-   "max_dd_pct": 0.0,
-   "unrealized_pnl": -2.74,
-   "equity_mtm": 508.5,
-   "open_position": {
-    "dir": -1,
-    "entry": 80309.1,
-    "entry_dt": "2026-10-27 13:00:00+00:00",
-    "stop": 81107.62,
-    "qty": 0.012804849219041901
-   },
+   "trades": 5,
+   "win_rate_pct": 80.0,
+   "expectancy": -0.2,
+   "equity": 499.0,
+   "max_dd_pct": -2.4,
+   "unrealized_pnl": null,
+   "equity_mtm": 499.0,
+   "open_position": null,
    "closed_last_24h": [
-    {
-     "dir": -1,
-     "entry_dt": "2026-10-26 10:00:00+00:00",
-     "exit_dt": "2026-10-26 13:00:00+00:00",
-     "pnl": 0.57,
-     "eq_after": 503.66
-    },
-    {
-     "dir": 1,
-     "entry_dt": "2026-10-26 14:00:00+00:00",
-     "exit_dt": "2026-10-26 15:00:00+00:00",
-     "pnl": 6.72,
-     "eq_after": 510.38
-    },
     {
      "dir": 1,
      "entry_dt": "2026-10-27 05:00:00+00:00",
      "exit_dt": "2026-10-27 06:00:00+00:00",
      "pnl": 0.86,
      "eq_after": 511.24
+    },
+    {
+     "dir": -1,
+     "entry_dt": "2026-10-27 13:00:00+00:00",
+     "exit_dt": "2026-10-27 21:00:00+00:00",
+     "pnl": -12.24,
+     "eq_after": 499.0
     }
    ]
   },
