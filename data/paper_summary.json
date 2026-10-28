@@ -1,11 +1,11 @@
 {
- "generated_at": "2026-10-28 01:50:35.676036+00:00",
- "latest_bar": "2026-10-27 20:00:00+00:00",
+ "generated_at": "2026-10-28 08:50:36.960721+00:00",
+ "latest_bar": "2026-10-28 04:00:00+00:00",
  "paper_start": "2026-10-26 00:00:00+00:00",
  "prices": {
-  "BTCUSDT": 80714.8,
-  "TSLAUSDT": 407.42,
-  "SPCXUSDT": 149.69
+  "BTCUSDT": 81054.9,
+  "TSLAUSDT": 412.29,
+  "SPCXUSDT": 150.32
  },
  "roster": {
   "donchian40_btc": {
@@ -110,13 +110,13 @@
   },
   "rsi2_1h_btc": {
    "strategy": "rsi2_1h_btc",
-   "trades": 5,
-   "win_rate_pct": 80.0,
-   "expectancy": -0.2,
-   "equity": 499.0,
+   "trades": 6,
+   "win_rate_pct": 83.3,
+   "expectancy": 0.04,
+   "equity": 500.25,
    "max_dd_pct": -2.4,
    "unrealized_pnl": null,
-   "equity_mtm": 499.0,
+   "equity_mtm": 500.25,
    "open_position": null,
    "closed_last_24h": [
     {
@@ -132,6 +132,13 @@
      "exit_dt": "2026-10-27 21:00:00+00:00",
      "pnl": -12.24,
      "eq_after": 499.0
+    },
+    {
+     "dir": -1,
+     "entry_dt": "2026-10-28 04:00:00+00:00",
+     "exit_dt": "2026-10-28 06:00:00+00:00",
+     "pnl": 1.24,
+     "eq_after": 500.25
     }
    ]
   },
@@ -178,9 +185,15 @@
    "expectancy": null,
    "equity": 500.0,
    "max_dd_pct": 0.0,
-   "unrealized_pnl": null,
-   "equity_mtm": 500.0,
-   "open_position": null,
+   "unrealized_pnl": -0.55,
+   "equity_mtm": 499.45,
+   "open_position": {
+    "dir": 1,
+    "entry": 81133.33,
+    "entry_dt": "2026-10-28 04:00:00+00:00",
+    "stop": 79696.95,
+    "qty": 0.006961923179502829
+   },
    "closed_last_24h": []
   }
  }
