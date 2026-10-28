@@ -1,11 +1,11 @@
 {
- "generated_at": "2026-10-28 08:50:36.960721+00:00",
+ "generated_at": "2026-10-28 09:20:40.407921+00:00",
  "latest_bar": "2026-10-28 04:00:00+00:00",
  "paper_start": "2026-10-26 00:00:00+00:00",
  "prices": {
-  "BTCUSDT": 81054.9,
-  "TSLAUSDT": 412.29,
-  "SPCXUSDT": 150.32
+  "BTCUSDT": 81435.9,
+  "TSLAUSDT": 409.87,
+  "SPCXUSDT": 150.07
  },
  "roster": {
   "donchian40_btc": {
@@ -185,8 +185,8 @@
    "expectancy": null,
    "equity": 500.0,
    "max_dd_pct": 0.0,
-   "unrealized_pnl": -0.55,
-   "equity_mtm": 499.45,
+   "unrealized_pnl": 2.11,
+   "equity_mtm": 502.11,
    "open_position": {
     "dir": 1,
     "entry": 81133.33,
