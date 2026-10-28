@@ -1,11 +1,11 @@
 {
- "generated_at": "2026-10-28 09:20:40.407921+00:00",
- "latest_bar": "2026-10-28 04:00:00+00:00",
+ "generated_at": "2026-10-28 13:05:37.512022+00:00",
+ "latest_bar": "2026-10-28 08:00:00+00:00",
  "paper_start": "2026-10-26 00:00:00+00:00",
  "prices": {
-  "BTCUSDT": 81435.9,
-  "TSLAUSDT": 409.87,
-  "SPCXUSDT": 150.07
+  "BTCUSDT": 80710.0,
+  "TSLAUSDT": 410.54,
+  "SPCXUSDT": 148.8
  },
  "roster": {
   "donchian40_btc": {
@@ -110,22 +110,15 @@
   },
   "rsi2_1h_btc": {
    "strategy": "rsi2_1h_btc",
-   "trades": 6,
-   "win_rate_pct": 83.3,
-   "expectancy": 0.04,
-   "equity": 500.25,
+   "trades": 7,
+   "win_rate_pct": 71.4,
+   "expectancy": 0.0,
+   "equity": 500.04,
    "max_dd_pct": -2.4,
    "unrealized_pnl": null,
-   "equity_mtm": 500.25,
+   "equity_mtm": 500.04,
    "open_position": null,
    "closed_last_24h": [
-    {
-     "dir": 1,
-     "entry_dt": "2026-10-27 05:00:00+00:00",
-     "exit_dt": "2026-10-27 06:00:00+00:00",
-     "pnl": 0.86,
-     "eq_after": 511.24
-    },
     {
      "dir": -1,
      "entry_dt": "2026-10-27 13:00:00+00:00",
@@ -139,6 +132,13 @@
      "exit_dt": "2026-10-28 06:00:00+00:00",
      "pnl": 1.24,
      "eq_after": 500.25
+    },
+    {
+     "dir": -1,
+     "entry_dt": "2026-10-28 09:00:00+00:00",
+     "exit_dt": "2026-10-28 12:00:00+00:00",
+     "pnl": -0.21,
+     "eq_after": 500.04
     }
    ]
   },
@@ -149,9 +149,15 @@
    "expectancy": 8.24,
    "equity": 508.24,
    "max_dd_pct": 0.0,
-   "unrealized_pnl": null,
-   "equity_mtm": 508.24,
-   "open_position": null,
+   "unrealized_pnl": 10.52,
+   "equity_mtm": 518.76,
+   "open_position": {
+    "dir": -1,
+    "entry": 81411.47,
+    "entry_dt": "2026-10-28 09:00:00+00:00",
+    "stop": 82088.99,
+    "qty": 0.01500312819243707
+   },
    "closed_last_24h": []
   },
   "donchian100_btc": {
@@ -185,14 +191,14 @@
    "expectancy": null,
    "equity": 500.0,
    "max_dd_pct": 0.0,
-   "unrealized_pnl": 2.11,
-   "equity_mtm": 502.11,
+   "unrealized_pnl": -2.95,
+   "equity_mtm": 497.05,
    "open_position": {
     "dir": 1,
     "entry": 81133.33,
     "entry_dt": "2026-10-28 04:00:00+00:00",
     "stop": 79696.95,
-    "qty": 0.006961923179502829
+    "qty": 0.006961923238650168
    },
    "closed_last_24h": []
   }
