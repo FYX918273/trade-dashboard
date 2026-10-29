@@ -1,11 +1,11 @@
 {
- "generated_at": "2026-10-29 00:50:33.403938+00:00",
- "latest_bar": "2026-10-28 20:00:00+00:00",
+ "generated_at": "2026-10-29 07:20:35.389895+00:00",
+ "latest_bar": "2026-10-29 00:00:00+00:00",
  "paper_start": "2026-10-26 00:00:00+00:00",
  "prices": {
-  "BTCUSDT": 81305.3,
-  "TSLAUSDT": 402.51,
-  "SPCXUSDT": 143.88
+  "BTCUSDT": 79927.6,
+  "TSLAUSDT": 401.61,
+  "SPCXUSDT": 144.02
  },
  "roster": {
   "donchian40_btc": {
@@ -46,21 +46,23 @@
   },
   "donchian20_btc": {
    "strategy": "donchian20_btc",
-   "trades": 0,
-   "win_rate_pct": null,
-   "expectancy": null,
-   "equity": 500.0,
-   "max_dd_pct": 0.0,
-   "unrealized_pnl": -0.08,
-   "equity_mtm": 499.92,
-   "open_position": {
-    "dir": 1,
-    "entry": 81315.79,
-    "entry_dt": "2026-10-28 12:00:00+00:00",
-    "stop": 79932.98,
-    "qty": 0.007231639480206026
-   },
-   "closed_last_24h": []
+   "trades": 1,
+   "win_rate_pct": 0.0,
+   "expectancy": -10.99,
+   "equity": 489.01,
+   "max_dd_pct": -2.2,
+   "unrealized_pnl": null,
+   "equity_mtm": 489.01,
+   "open_position": null,
+   "closed_last_24h": [
+    {
+     "dir": 1,
+     "entry_dt": "2026-10-28 12:00:00+00:00",
+     "exit_dt": "2026-10-29 00:00:00+00:00",
+     "pnl": -10.99,
+     "eq_after": 489.01
+    }
+   ]
   },
   "keylevel_btc_1h": {
    "strategy": "keylevel_btc_1h",
@@ -69,9 +71,16 @@
    "expectancy": -11.64,
    "equity": 476.71,
    "max_dd_pct": -4.7,
-   "unrealized_pnl": null,
-   "equity_mtm": 476.71,
-   "open_position": null,
+   "unrealized_pnl": 0.4,
+   "equity_mtm": 477.11,
+   "open_position": {
+    "dir": -1,
+    "entry": 79954.8,
+    "entry_dt": "2026-10-29 02:00:00+00:00",
+    "stop": 80600,
+    "tp": 78000,
+    "qty": 0.014777218114844462
+   },
    "closed_last_24h": []
   },
   "keylevel_gate_btc_1h": {
@@ -81,9 +90,16 @@
    "expectancy": -11.64,
    "equity": 476.71,
    "max_dd_pct": -4.7,
-   "unrealized_pnl": null,
-   "equity_mtm": 476.71,
-   "open_position": null,
+   "unrealized_pnl": 0.4,
+   "equity_mtm": 477.11,
+   "open_position": {
+    "dir": -1,
+    "entry": 79954.8,
+    "entry_dt": "2026-10-29 02:00:00+00:00",
+    "stop": 80600,
+    "tp": 78000,
+    "qty": 0.014777218114844462
+   },
    "closed_last_24h": []
   },
   "ema_cross_1h_btc": {
@@ -93,29 +109,28 @@
    "expectancy": null,
    "equity": 500.0,
    "max_dd_pct": 0.0,
-   "unrealized_pnl": null,
-   "equity_mtm": 500.0,
-   "open_position": null,
+   "unrealized_pnl": -0.03,
+   "equity_mtm": 499.97,
+   "open_position": {
+    "dir": -1,
+    "entry": 79924.82,
+    "entry_dt": "2026-10-29 03:00:00+00:00",
+    "stop": 80814.04,
+    "qty": 0.01124571770784514
+   },
    "closed_last_24h": []
   },
   "rsi2_1h_btc": {
    "strategy": "rsi2_1h_btc",
-   "trades": 9,
-   "win_rate_pct": 55.6,
-   "expectancy": -1.36,
-   "equity": 487.73,
+   "trades": 10,
+   "win_rate_pct": 60.0,
+   "expectancy": -1.12,
+   "equity": 488.77,
    "max_dd_pct": -4.6,
    "unrealized_pnl": null,
-   "equity_mtm": 487.73,
+   "equity_mtm": 488.77,
    "open_position": null,
    "closed_last_24h": [
-    {
-     "dir": -1,
-     "entry_dt": "2026-10-27 13:00:00+00:00",
-     "exit_dt": "2026-10-27 21:00:00+00:00",
-     "pnl": -12.24,
-     "eq_after": 499.0
-    },
     {
      "dir": -1,
      "entry_dt": "2026-10-28 04:00:00+00:00",
@@ -143,6 +158,13 @@
      "exit_dt": "2026-10-28 20:00:00+00:00",
      "pnl": -11.71,
      "eq_after": 487.73
+    },
+    {
+     "dir": 1,
+     "entry_dt": "2026-10-29 02:00:00+00:00",
+     "exit_dt": "2026-10-29 05:00:00+00:00",
+     "pnl": 1.04,
+     "eq_after": 488.77
     }
    ]
   },
@@ -153,9 +175,15 @@
    "expectancy": 8.35,
    "equity": 516.7,
    "max_dd_pct": 0.0,
-   "unrealized_pnl": null,
-   "equity_mtm": 516.7,
-   "open_position": null,
+   "unrealized_pnl": -0.88,
+   "equity_mtm": 515.82,
+   "open_position": {
+    "dir": 1,
+    "entry": 80002.79,
+    "entry_dt": "2026-10-29 02:00:00+00:00",
+    "stop": 79119.07,
+    "qty": 0.011693766792368967
+   },
    "closed_last_24h": [
     {
      "dir": -1,
@@ -192,21 +220,23 @@
   },
   "swing_break_btc_4h": {
    "strategy": "swing_break_btc_4h",
-   "trades": 0,
-   "win_rate_pct": null,
-   "expectancy": null,
-   "equity": 500.0,
-   "max_dd_pct": 0.0,
-   "unrealized_pnl": 1.2,
-   "equity_mtm": 501.2,
-   "open_position": {
-    "dir": 1,
-    "entry": 81133.33,
-    "entry_dt": "2026-10-28 04:00:00+00:00",
-    "stop": 79696.95,
-    "qty": 0.006961923340721662
-   },
-   "closed_last_24h": []
+   "trades": 1,
+   "win_rate_pct": 0.0,
+   "expectancy": -11.01,
+   "equity": 488.99,
+   "max_dd_pct": -2.2,
+   "unrealized_pnl": null,
+   "equity_mtm": 488.99,
+   "open_position": null,
+   "closed_last_24h": [
+    {
+     "dir": 1,
+     "entry_dt": "2026-10-28 04:00:00+00:00",
+     "exit_dt": "2026-10-29 00:00:00+00:00",
+     "pnl": -11.01,
+     "eq_after": 488.99
+    }
+   ]
   }
  }
 }
